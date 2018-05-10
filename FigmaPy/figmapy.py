@@ -56,7 +56,6 @@ class FigmaPy:
     """
     Create token from client_id, client_secret, code
     """
-
     def create_token(self, client_id, client_secret, redirect_uri, code):
         payload = {
             'client_id': '{0}'.format(client_id),
