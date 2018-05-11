@@ -48,6 +48,7 @@ class FigmaPy:
                 print(json.loads(response.text)['message'])
                 return None
         except (requests.HTTPError, requests.exceptions.SSLError) as e:
+            print('Error occurred attpempting to make an api request. {0}'.format(e))
             return None
 
     # -------------------------------------------------------------------------
