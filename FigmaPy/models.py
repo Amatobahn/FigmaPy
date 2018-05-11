@@ -405,7 +405,7 @@ class Constraint:
 
 
 class Rect:
-    # A rectangle that expresses a counding box in absolute coordinates
+    # A rectangle that expresses a bounding box in absolute coordinates
     def __init__(self, x, y, width, height):
         self.x = x  # X coordinate of top left corner of the rectangle
         self.y = y  # Y coordinate of top left corner of the rectangle
