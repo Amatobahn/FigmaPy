@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='FigmaPy',
@@ -19,7 +19,7 @@ setup(
     # Classifiers
     classifiers=[
         # Project Stage:
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         # Intended for:
         'Intended Audience :: Developers',
@@ -29,7 +29,10 @@ setup(
         'License :: Apache License v2.0',
 
         # Supported Python versions:
-        'Programming Language :: Python :: >=3.4.4',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 
     # Keywords
