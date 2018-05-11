@@ -1,32 +1,37 @@
 # API Scope Resource Objects
+from enum import Enum
 
 
 class File:
+    # JSON file contents from a file
     def __init__(self, name, document, components, last_modified, thumbnail_url, schema_version, styles):
-        self.name = name
-        self.last_modified = last_modified
-        self.thumbnail_url = thumbnail_url
-        self.document = document
-        self.components = components
-        self.schema_version = schema_version
-        self.styles = styles
+        self.name = name  # File name
+        self.last_modified = last_modified  # Date file was last modified
+        self.thumbnail_url = thumbnail_url  # File thumbnail URL
+        self.document = document  # Document content from a file
+        self.components = components  # Document components from a file
+        self.schema_version = schema_version  # Schema version from a file
+        self.styles = styles  # Styles contained within a file
 
 
 class FileImages:
+    # URLs for server-side rendered images from a file
     def __init__(self, images, err):
-        self.err = err
-        self.images = images
+        self.err = err  # Error type as enum string
+        self.images = images  # URLs of server-side rendered images from a file
 
 
 class FileVersions:
+    # Version history from a file
     def __init__(self, versions, pagination):
-        self.versions = versions
-        self.pagination = pagination
+        self.versions = versions  # Version from a file
+        self.pagination = pagination  # Pagination from a file
 
 
 class Comments:
+    # Comment(s) from a file
     def __init__(self, comments):
-        self.comments = None
+        self.comments = None  # Comment(s) from a file
 
         if len(comments) > 0 or comments is not None:
             self.comments = []
@@ -37,8 +42,9 @@ class Comments:
 
 
 class TeamProjects:
+    # Projects from a team
     def __init__(self, projects):
-        self.projects = projects
+        self.projects = projects  # Projects from a team
 
     def get_project_name_by_id(self, id):
         for project in self.projects:
@@ -52,8 +58,9 @@ class TeamProjects:
 
 
 class ProjectFiles:
+    # Files from a project
     def __init__(self, files):
-        self.files = files
+        self.files = files  # Files from a project
 
 
 # -------------------------------------------------------------------------
@@ -373,6 +380,174 @@ class Instance:
 # -------------------------------------------------------------------------
 # FILE FORMAT TYPES
 # -------------------------------------------------------------------------
+class Color:
+    # An RGBA Color
+    def __init__(self, r, g, b, a):
+        self.r = r  # Red channel value, between 0 and 1
+        self.g = g  # Green channel value, between 0 and 1
+        self.b = b  # Blue channel value, between 0 and 1
+        self.a = a  # Alpha channel value, between 0 and 1
+
+
+class ExportSetting:
+    # Format and size to export an asset at
+    def __init__(self, suffix, format, constraint):
+        self.suffix = suffix  # File suffix to append all file names
+        self.format = format  # Image type, string enum that supports values 'JPG', 'PNG', and 'SVG'
+        self.constraint = constraint  # Constraint that determines sizing of exported asset
+
+
+class Constraint:
+    # Sizing constraint for exports
+    def __init__(self, type, value):
+        self.type = type  # Type of constraint to apply; string enum with potential values 'SCALE', 'WIDTH', 'HEIGHT'
+        self.value = value  # See type property for effect of this field
+
+
+class Rect:
+    # A rectangle that expresses a counding box in absolute coordinates
+    def __init__(self, x, y, width, height):
+        self.x = x  # X coordinate of top left corner of the rectangle
+        self.y = y  # Y coordinate of top left corner of the rectangle
+        self.width = width  # Width of the rectangle
+        self.height = height  # Height of the rectangle
+
+
+class BlendMode(Enum):
+    # Enum describing how layer blens with layers below
+    # This type is a string enum with the following possible values:
+
+    # Normal Blends
+    PASS_THROUGH = 'PASS_THROUGH'
+    NORMAL = 'NORMAL'
+    # Darken
+    DARKEN = 'DARKEN'
+    MULTIPLY = 'MULTIPLY'
+    LINEAR_BURN = 'LINEAR_BURN'
+    COLOR_BURN = 'COLOR_BURN'
+    # Lighten
+    LIGHTEN = 'LIGHTEN'
+    SCREEN = 'SCREEN'
+    LINEAR_DODGE = 'LINEAR_DODGE'
+    COLOR_DODGE = 'COLOR_DODGE'
+    # Contrast
+    OVERLAY = 'OVERLAY'
+    SOFT_LIGHT = 'SOFT_LIGHT'
+    HARD_LIGHT = 'HARD_LIGHT'
+    # Inversion
+    DIFFERENCE = 'DIFFERENCE'
+    EXCLUSION = 'EXCLUSION'
+    # Component
+    HUE = 'HUE'
+    SATURATION = 'SATURATION'
+    COLOR = 'COLOR'
+    LUMINOSITY = 'LUMINOSITY'
+
+
+class LayoutConstraint:
+    # Layout constraint relative to containing Frame
+    def __init__(self, vertical, horizontal):
+        self.vertical = vertical  # Vertical constraint as an enum
+        self.horizontal = horizontal  # Horizontal constraint as an enum
+
+
+class LayoutGrid:
+    # Guides to align and place objects within a frame
+    def __init__(self, pattern, section_size, visible, color, alignment, gutter_size, offset, count):
+        self.pattern = pattern  # Orientatoin of the grid as a string enum
+        self.section_size = section_size  # Width of column grid or height of row grid or square grid spacing
+        self.visible = visible  # Is the grid currently visible?
+        self.color = color  # Color of the grid
+        # The following properties are only meaningful for directional grids (COLUMNS or ROWS)
+        self.alignment = alignment  # Positioning of grid as a string enum
+        self.gutter_size = gutter_size  # Spacing in between columns and rows
+        self.offset = offset  # Spacing before the first column or row
+        self.count = count  # Number of columns or rows
+
+
+class Effect:
+    # A visual effect such as a shadow or blur
+    def __init__(self, type, visible, radius, color, blend_mode, offset):
+        self.type = type  # Type of effect as a string enum
+        self.visible = visible  # is the effect active?
+        self.radius = radius  # Radius of the blur effect (applies to shadows as well)
+        # The following properties are for shadows only:
+        self.color = color  # The color of the shadow
+        self.blend_mode = blend_mode  # Blend mode of the shadow
+        self.offset = offset  # How far the shadow is projected in the x and y directions
+
+
+class Paint:
+    # A solid color, gradient, or image texture that can be applied as fills or strokes
+    def __init__(self, type, color, gradient_handle_positions, gradient_stops, scale_mode,
+                 visible=True, opacity=1):
+        self.type = type  # Type of paint as a string enum
+        self.visible = visible  # Is the paint enabled?
+        self.opacity = opacity  # Overall opacity of paint (colors within the paint can also have opacity values)
+        self.color = color  # Solid color of the paint
+        # For gradient paints:
+        self.gradient_handle_positions = gradient_handle_positions  # Three vectors, each are pos in normalized space
+        self.gradient_stops = gradient_stops  # Positions of key points along the gradient axis with the anchored colors
+        # For image paints:
+        self.scale_mode = scale_mode  # Image scaling mode
+
+
+class Vector2d:
+    # A 2d vector
+    def __init__(self, x, y):
+        self.x = x  # X coordinate of the vector
+        self.y = y  # Y coordinate of the vector
+
+
+class Transform:
+    # A 2x3 2D affine transformation matrix
+    def __init__(self, matrix):
+        self.matrix = matrix  # Transformation matrix
+
+
+class Path:
+    # A vector path
+    def __init__(self, path, winding_rule):
+        self.path = path  # A sequence of path commands in SVG notation
+        self.winding_rule = winding_rule  # Winding rule for the path, either 'EVENODD' or 'NONZERO'
+
+
+class FrameOffset:
+    # A relative offset within a frame
+    def __init__(self, node_id, node_offset):
+        self.node_id = node_id  # Unique id specifying the frame
+        self.node_offset = node_offset  # 2d vector offset within the frame
+
+
+class ColorStop:
+    # A position color pair representing a gradient stop
+    def __init__(self, position, color):
+        self.position = position  # Value between 0 and 1 representing position along gradient axis
+        self.color = color  # Color attached to corresponding position
+
+
+class TypeStyle:
+    # Metadata for character formatting
+    def __init__(self, font_family, font_post_script_name, italic, font_weight, font_size, text_align_horizontal,
+                 text_align_vertical, letter_spacing, fills, line_height_px, line_height_percent):
+        self.font_family = font_family  # Font family of text (standard name)
+        self.font_post_script_name = font_post_script_name  # PostScript font name
+        self.italic = italic  # Is text italicized?
+        self.font_weight = font_weight  # Numeric font weight
+        self.font_size = font_size  # Font size in px
+        self.text_align_horizontal = text_align_horizontal  # Horizontal text alignment as string enum
+        self.text_align_vertical = text_align_vertical  # Vertical text alignment as string enum
+        self.letter_spacing = letter_spacing  # Space between characters in px
+        self.fills = fills  # Paints applied to characters
+        self.line_height_px = line_height_px  # Line height in px
+        self.line_height_percent = line_height_percent  # Line height as a percentage of normal line height
+
+
+class ComponentDescription:
+    # A description of a master component. Helps you identify which component instances are attached to
+    def __init__(self, name, description):
+        self.name = name  # The name of the component
+        self.description = description  # The description of the component as entered in the editor
 
 
 # -------------------------------------------------------------------------
