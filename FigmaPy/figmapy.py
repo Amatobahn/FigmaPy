@@ -45,7 +45,7 @@ class FigmaPy:
             if response.status_code == 200:
                 return json.loads(response.text)
             else:
-                print(json.loads(response.text)['message'])
+                print(json.loads(response.text))
                 return None
         except (requests.HTTPError, requests.exceptions.SSLError) as e:
             print('Error occurred attpempting to make an api request. {0}'.format(e))
@@ -144,12 +144,10 @@ class FigmaPy:
                 optional_data += '&{0}'.format(str(format))
             if version is not None:
                 optional_data += '&{0}'.format(str(version))
-        id_list = ''
-        for id in range(len(ids)):
-            if id == 0:
-                id_list = str(id)
-            else:
-                id_list = ','.join(map(id, id_list))
+        id_array = []
+        for id in ids:
+            id_array.append(id)
+        id_list = ','.join(id_array)
         data = self.api_request('images/{0}?ids={1}{2}'.format(file_key, id_list, optional_data), method='get')
         return FileImages(data['images'], data['err'])
 
