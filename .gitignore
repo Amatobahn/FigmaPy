@@ -101,3 +101,4 @@ ENV/
 
 # pycharm
 .idea/*
+test/test.py
