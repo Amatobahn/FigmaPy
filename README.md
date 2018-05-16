@@ -3,7 +3,7 @@
 An unofficial Python3+ wrapper for Figma API
 
 ### Install 
-From PyPi:
+From PyPI:
 ```bash
 pip install FigmaPy
 ```
