@@ -1,4 +1,5 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+from os import getcwd
 
 setup(
     name='FigmaPy',
@@ -37,6 +38,9 @@ setup(
 
     # Keywords
     keywords='development tools api',
+
+    # Packages
+    packages=['FigmaPy'],
 
     # Required dependencies. Will be installed by pip
     # when the project is installed.
