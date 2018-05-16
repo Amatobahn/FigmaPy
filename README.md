@@ -2,7 +2,12 @@
 
 An unofficial Python3+ wrapper for Figma API
 
-### Install (Using Distributed Wheel from GitHub)
+### Install 
+From PyPI:
+```bash
+pip install FigmaPy
+```
+Using Distributed Wheel from GitHub:
 ```bash
 pip install FigmaPy-2018.1.0-py3-none-any.whl
 ```
