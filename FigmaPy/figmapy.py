@@ -27,6 +27,8 @@ class FigmaPy:
         else:
             header = {'X-Figma-Token': '{0}'.format(self.api_token)}
 
+        header['Content-Type'] = 'application/json'
+
         try:
             if method == 'head':
                 response = requests.head('{0}{1}'.format(self.api_uri, endpoint), headers=header)
@@ -45,9 +47,8 @@ class FigmaPy:
             if response.status_code == 200:
                 return json.loads(response.text)
             else:
-                print(json.loads(response.text))
                 return None
-        except (requests.HTTPError, requests.exceptions.SSLError) as e:
+        except (Exception, requests.HTTPError, requests.exceptions.SSLError) as e:
             print('Error occurred attpempting to make an api request. {0}'.format(e))
             return None
 
@@ -101,33 +102,39 @@ class FigmaPy:
                 optional_data += str(version)
 
         data = self.api_request('files/{0}{1}'.format(file_key, optional_data), method='get')
-        return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
-                    data['schemaVersion'], data['styles'])
+        if data is not None:
+            return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
+                        data['schemaVersion'], data['styles'])
 
     """
     Get the version history of a file.
     """
     def get_file_versions(self, file_key):
         data = self.api_request('files/{0}/versions'.format(file_key), method='get')
-        return FileVersions(data['versions'], data['pagination'])
+        if data is not None:
+            return FileVersions(data['versions'], data['pagination'])
 
     """
     Get all comments on a file.
     """
     def get_comments(self, file_key):
         data = self.api_request('files/{0}/comments'.format(file_key), method='get')
-        return Comments(data['comments'])
+        if data is not None:
+            return Comments(data['comments'])
 
     """
     Create a comment on a file.
     """
     def post_comment(self, file_key, message, client_meta=None):
-        payload = {'message': '{0}'.format(message)}
+        print(client_meta)
         if client_meta is not None:
-            payload['client_meta'] = str(client_meta)
-        data = self.api_request('files/{0}/comments{1}'.format(file_key, client_meta), method='post', payload=payload)
-        return Comment(data['id'], data['file_key'], data['parent_id'], data['user'], data['created_at'],
-                       data['resolved_at'], data['message'], data['client_meta'], data['order_id'])
+            payload = '{{"message":"{0}","client_meta":{1}}}'.format(message.title(), client_meta)
+        else:
+            payload = "{{'message':'{0}'}}".format(message)
+        data = self.api_request('files/{0}/comments'.format(file_key), method='post', payload=payload)
+        if data is not None:
+            return Comment(data['id'], data['file_key'], data['parent_id'], data['user'], data['created_at'],
+                           data['resolved_at'], data['message'], data['client_meta'], data['order_id'])
 
     # -------------------------------------------------------------------------
     # SCOPE: IMAGES
@@ -149,7 +156,8 @@ class FigmaPy:
             id_array.append(id)
         id_list = ','.join(id_array)
         data = self.api_request('images/{0}?ids={1}{2}'.format(file_key, id_list, optional_data), method='get')
-        return FileImages(data['images'], data['err'])
+        if data is not None:
+            return FileImages(data['images'], data['err'])
 
     # -------------------------------------------------------------------------
     # SCOPE: TEAMS
@@ -159,7 +167,8 @@ class FigmaPy:
     """
     def get_team_projects(self, team_id):
         data = self.api_request('teams/{0}/projects'.format(team_id), method='get')
-        return TeamProjects(data['projects'])
+        if data is not None:
+            return TeamProjects(data['projects'])
 
     # -------------------------------------------------------------------------
     # SCOPE: PROJECTS
@@ -169,4 +178,5 @@ class FigmaPy:
     """
     def get_project_files(self, project_id):
         data = self.api_request('projects/{0}/files'.format(project_id))
-        return ProjectFiles(data['files'])
+        if data is not None:
+            return ProjectFiles(data['files'])
