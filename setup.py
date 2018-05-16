@@ -7,6 +7,9 @@ setup(
 
     description='Figma API wrapper.',
 
+    # Keywords
+    keywords=['Amatobahn', 'Figma', 'pypi', 'package'],
+
     # The project's main homepage.
     url='https://www.IamGregAmato.com',
 
@@ -19,25 +22,12 @@ setup(
 
     # Classifiers
     classifiers=[
-        # Project Stage:
         'Development Status :: 4 - Beta',
-
-        # Intended for:
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Tools',
-
-        # License:
-        'License :: Apache License v2.0',
-
-        # Supported Python versions:
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 3 :: Only',
     ],
-
-    # Keywords
-    keywords='development tools api',
 
     # Packages
     packages=['FigmaPy'],
