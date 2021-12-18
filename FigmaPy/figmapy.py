@@ -146,11 +146,11 @@ class FigmaPy:
         optional_data = ''
         if scale is not None or format is not None or version is not None:
             if scale is not None:
-                optional_data += '&{0}'.format(str(scale))
+                optional_data += '&scale={0}'.format(str(scale))
             if format is not None:
-                optional_data += '&{0}'.format(str(format))
+                optional_data += '&format={0}'.format(str(format))
             if version is not None:
-                optional_data += '&{0}'.format(str(version))
+                optional_data += '&version={0}'.format(str(version))
         id_array = []
         for id in ids:
             id_array.append(id)
