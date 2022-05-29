@@ -6,7 +6,7 @@
 
 An unofficial Python3+ wrapper for Figma API
 
-### Quick start
+## Quick start
 
 ```python
 import FigmaPy
@@ -35,19 +35,24 @@ pprint.pprint(images.images)
 #  '7:6': 'https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f56d5d8dd-REDACTED-af17-461010e0af14'}
 ```
 
-### Install
-- From this repo:
-Most up to date code lives here.
+## Install
+##### From Source - most up to date code
 
-- From PyPI: (might be outdated)
+Clone or download the repository, navigate to the root folder and run:
+```bash
+python setup.py install
+```
+
+
+#### From PyPI
 ```bash
 pip install FigmaPy
 ```
-- Using Distributed Wheel from GitHub: (might be outdated)
+#### Using Distributed Wheel from GitHub:
 ```bash
 pip install FigmaPy-2018.1.0-py3-none-any.whl
 ```
 
 
-### Documentation
+## Documentation
 API Documentation : https://www.figma.com/developers/docs
