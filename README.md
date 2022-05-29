@@ -1,4 +1,3 @@
-![alt text](http://www.iamgregamato.com/img/fp_logo.svg)
 <p align=center>
   <a href="https://badge.fury.io/py/FigmaPy">
     <img src="https://badge.fury.io/py/FigmaPy.svg" alt="PyPI version" height="18">
@@ -36,13 +35,19 @@ pprint.pprint(images.images)
 #  '7:6': 'https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f56d5d8dd-REDACTED-af17-461010e0af14'}
 ```
 
-### Install 
-From PyPI:
+### Install
+- From this repo:
+Most up to date code lives here.
+
+- From PyPI: (might be outdated)
 ```bash
 pip install FigmaPy
 ```
-Using Distributed Wheel from GitHub:
+- Using Distributed Wheel from GitHub: (might be outdated)
 ```bash
 pip install FigmaPy-2018.1.0-py3-none-any.whl
 ```
+
+
+### Documentation
 API Documentation : https://www.figma.com/developers/docs
