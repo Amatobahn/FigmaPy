@@ -8,7 +8,6 @@ class File:
         self.name = name  # File name
         self.lastModified = lastModified  # Date file was last modified
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
-        print('document', document)
         self.document = Document(**document)  # Document content from a file
         self.components = components  # Document components from a file
         self.schemaVersion = schemaVersion  # Schema version from a file
@@ -67,50 +66,12 @@ class ProjectFiles:
 # -------------------------------------------------------------------------
 # NODE PROPERTIES
 # -------------------------------------------------------------------------
-def serialise_children(children):
-    # this function only works if the children's paramaters' names returned by figma API,
-    # match the names of the properties in our Node classes
 
-    # children is an array of dicts defining figma nodes, example:
-
-    # "children": [
-    #       {
-    #         "backgroundColor": {
-    #           "a": 1,
-    #           "b": 0.8980392156862745,
-    #           "g": 0.8980392156862745,
-    #           "r": 0.8980392156862745
-    #         },
-    #         "children": [],
-    #         "exportSettings": [],
-    #         "id": "0:1",
-    #         "name": "Page 1",
-    #         "type": "CANVAS",
-    #         "visible": true
-    #       }
-    #     ],
-
-    if children is None:
-        return
-
-    # for every child, get the type and create the object
-    serialised_children = []
-    for child in children:
-        node_type = NodeTypes[child.get('type')]
-        node = node_type.value(**child)
-        serialised_children.append(node)
-    return serialised_children
-
+# for node types, we store every property mentioned in the figma API, in the order they are mentioned
+# see https://www.figma.com/developers/api#node-types
 
 class Node:
-    def __init__(self,
-                 id,
-                 name,
-                 type,
-                 visible=True,
-                 pluginData=None,
-                 sharedPluginData=None,
-                 *args, **kwargs):
+    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, *args, **kwargs):
         self.id = id  # A string uniquely identifying this node within the document.
         self.name = name  # The name given to the node by the user in the tool.
         self.visible = visible  # Whether or not the node is visible on the canvas.
@@ -123,23 +84,41 @@ class Node:
                   "this is likely due to a change in the Figma API, or an unsupported parameter in this wrapper")
             print(args, kwargs)
 
+    @classmethod
+    def deserialize_nodes(cls, children):
+        return [cls.deserialize(child) for child in children]
+
+    @staticmethod
+    def deserialize(node_dict):
+        """
+        convert a json/dict into a figma node
+
+        Deserialize a dictionary into a figma node.
+        The keys in the dict need to match the names of the properties in our Node classes.
+        this ensures the dicts returned by the figma API can be loaded directly into our classes.
+
+        :param children: list of dictionaries
+        :return:
+        """
+        if node_dict is None:
+            return
+        node_type = NodeTypes[node_dict.get('type')]
+        node = node_type.value(**node_dict)
+        return node
+
+    # @staticmethod
+    # def serialize(node):
+    #     raise NotImplementedError
+    #     # TODO: implement
+
 
 class Document(Node):
     # The root node
     def __init__(self,
-                children,
-                *args, **kwargs):
-        print('children', children)
+                 children,
+                 *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.children = serialise_children(children)  # An array of canvases attached to the document
-
-    # def __init__(self, id, name, type, children, visible=True, pluginData=None, sharedPluginData=None):
-    #     super().__init__(id=id,
-    #                      name=name,
-    #                      type=type,
-    #                      visible=visible,
-    #                      pluginData=pluginData,
-    #                      sharedPluginData=sharedPluginData)
+        self.children = self.deserialize_nodes(children)  # An array of canvases attached to the document
 
 
 class Canvas(Node):
@@ -153,7 +132,7 @@ class Canvas(Node):
                  exportSettings=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.children = serialise_children(children)  # An array of top level layers on the canvas
+        self.children = self.deserialize_nodes(children)  # An array of top level layers on the canvas
         self.backgroundColor = backgroundColor  # Background color of the canvas
         self.prototypeStartNodeID = prototypeStartNodeID  # DEPRECATED] Node ID that corresponds to the start frame for prototypes. This is deprecated with the introduction of multiple flows. Please use the flowStartingPoints field.
         self.prototypeDevice = prototypeDevice
@@ -186,13 +165,26 @@ class Frame(Node):
                  transitionDuration=None,
                  transitionEasing=None,
                  opacity=1,
-                 layoutGrids=None,
-                 effects=None,
-                 isMask=False,
                  exportSettings=None,
+                 primaryAxisSizingMode=None,
+                 counterAxisSizingMode=None,
+                 primaryAxisAlignItems=None,
+                 counterAxisAlignItems=None,
+                 paddingLeft=None,
+                 paddingRight=None,
+                 paddingTop=None,
+                 paddingBottom=None,
+                 horizontalPadding=None,
+                 verticalPadding=None,
+                 itemSpacing=None,
+                 layoutGrids=None,
+                 overflowDirection=None,
+                 effects=None,
+                 isMask=None,
+                 layoutMode=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.children = serialise_children(children)  # An array of nodes that are direct children of this node
+        self.children = self.deserialize_nodes(children)  # An array of nodes that are direct children of this node
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.background = background  # [DEPRECATED] Background of the node. This is deprecated, as backgrounds for frames are now in the fills field.
         self.backgroundColor = backgroundColor  # [DEPRECATED] Background color of the node. This is deprecated, as frames now support more than a solid color as a background. Please use the fills field instead.
@@ -208,15 +200,27 @@ class Frame(Node):
         self.constraints = constraints  # Horizontal and vertical layout constraints for node
         self.layoutAlign = layoutAlign
         self.transitionNodeID = transitionNodeID  # Node ID of node to transition to in prototyping
-        self.transitionDuration = transitionDuration 
+        self.transitionDuration = transitionDuration
         self.transitionEasing = transitionEasing
         self.opacity = opacity  # Opacity of the node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.size = size  # Width and height of element. Only present if geometry=paths is passed
         self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry.
         self.clipsContent = clipsContent  # Does this node clip content outside of its bounds?
-        # TODO add more fields
+        self.layoutMode = layoutMode
+        self.primaryAxisSizingMode = primaryAxisSizingMode
+        self.counterAxisSizingMode = counterAxisSizingMode
+        self.primaryAxisAlignItems = primaryAxisAlignItems
+        self.counterAxisAlignItems = counterAxisAlignItems
+        self.paddingLeft = paddingLeft
+        self.paddingRight = paddingRight
+        self.paddingTop = paddingTop
+        self.paddingBottom = paddingBottom
+        self.horizontalPadding = horizontalPadding
+        self.verticalPadding = verticalPadding
+        self.itemSpacing = itemSpacing
         self.layoutGrids = layoutGrids  # An array of layout grids attached to this node
+        self.overflowDirection = overflowDirection
         self.effects = effects  # An array of effects attached to this node
         self.isMask = isMask  # Does this node mask sibling nodes in front of it?
 
@@ -229,7 +233,8 @@ class Group(Frame):
 
 class Vector(Node):
     # A vector network, consisting of vertices and edges
-    def __init__(self, blendMode, constraints, absoluteBoundingBox, size=None, relativeTransform=None, fillGeometry=None,
+    def __init__(self, blendMode, constraints, absoluteBoundingBox, size=None, relativeTransform=None,
+                 fillGeometry=None,
                  strokeWeight=None, strokeGeometry=None, strokeAlign=None, exportSettings=None, preserveRatio=False,
                  transitionNodeID=None, opacity=1, transitionNodeDuration=None,
                  transitionEasing=None, layoutGrow=0, locked=False, layoutAlign=None, effects=None,
@@ -275,7 +280,7 @@ class BooleanOperation(Vector):
     # A vector network, consisting of vertices and edges
     def __init__(self, children, booleanOperation, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.children = serialise_children(children)  # An array of nodes that are direct children of this node
+        self.children = self.deserialize_nodes(children)  # An array of nodes that are direct children of this node
         self.booleanOperation = booleanOperation
 
 
@@ -315,7 +320,8 @@ class Rectangle(Vector):
 class Text(Vector):
     # A regular n-sided polygon [Shares properties of Vector]
     # plus characters, style, characterStyleOverrides, and styleOverrideTable
-    def __init__(self, characters, style, characterStyleOverrides, styleOverrideTable, lineTypes, lineIndentations, *args, **kwargs):
+    def __init__(self, characters, style, characterStyleOverrides, styleOverrideTable, lineTypes, lineIndentations,
+                 *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.characters = characters  # Text contained within text box
         self.style = style  # Style of text including font family and weight
@@ -355,20 +361,23 @@ class Instance(Frame):
 
 class Sticky(Node):
     # FigJam Sticky node
-    # TODO
-    pass
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError("Sticky is not implemented yet")
+        super().__init__(*args, **kwargs)
 
 
 class ShapeWithText(Node):
     # FigJam Shape-with-text node
-    # TODO
-    pass
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError("ShapeWithText is not implemented")
+        super().__init__(*args, **kwargs)
 
 
 class Connector(Node):
     # FigJam Connector node
-    # TODO
-    pass
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError("Connector is not implemented yet")
+        super().__init__(*args, **kwargs)
 
 
 class NodeTypes(Enum):
@@ -388,11 +397,12 @@ class NodeTypes(Enum):
     TEXT = Text
     SLICE = Slice
     COMPONENT = Component
-    # COMPONENT_SET = ComponentSet
+    COMPONENT_SET = ComponentSet
     INSTANCE = Instance
-    # STICKY = Sticky
-    # SHAPE_WITH_TEXT = ShapeWithText
-    # CONNECTOR = Connector
+    STICKY = Sticky
+    SHAPE_WITH_TEXT = ShapeWithText
+    CONNECTOR = Connector
+
 
 # -------------------------------------------------------------------------
 # FILE FORMAT TYPES
