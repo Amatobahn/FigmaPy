@@ -8,6 +8,7 @@ class File:
         self.name = name  # File name
         self.lastModified = lastModified  # Date file was last modified
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
+        print('document', document)
         self.document = Document(**document)  # Document content from a file
         self.components = components  # Document components from a file
         self.schemaVersion = schemaVersion  # Schema version from a file
@@ -96,8 +97,8 @@ def serialise_children(children):
     serialised_children = []
     for child in children:
         node_type = NodeTypes[child.get('type')]
-        node_type(**child)
-        serialised_children.append(node_type)
+        node = node_type.value(**child)
+        serialised_children.append(node)
     return serialised_children
 
 
@@ -125,9 +126,10 @@ class Node:
 
 class Document(Node):
     # The root node
-    def __int__(self,
+    def __init__(self,
                 children,
                 *args, **kwargs):
+        print('children', children)
         super().__init__(*args, **kwargs)
         self.children = serialise_children(children)  # An array of canvases attached to the document
 
@@ -145,12 +147,16 @@ class Canvas(Node):
     def __init__(self,
                  children,
                  backgroundColor,
+                 prototypeStartNodeID=None,
+                 prototypeDevice=None,
                  flowStartingPoints=None,
                  exportSettings=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.children = serialise_children(children)  # An array of top level layers on the canvas
         self.backgroundColor = backgroundColor  # Background color of the canvas
+        self.prototypeStartNodeID = prototypeStartNodeID  # DEPRECATED] Node ID that corresponds to the start frame for prototypes. This is deprecated with the introduction of multiple flows. Please use the flowStartingPoints field.
+        self.prototypeDevice = prototypeDevice
         self.flowStartingPoints = flowStartingPoints  # An array of flow starting points sorted by its position in the prototype settings panel.
         self.exportSettings = exportSettings  # An array of export settings representing images to export. Default: []
 
@@ -164,8 +170,9 @@ class Frame(Node):
                  blendMode,
                  constraints,
                  absoluteBoundingBox,
-                 size,
-                 relativeTransform, clipsContent,
+                 clipsContent,
+                 size=None,
+                 relativeTransform=None,
                  locked=False,
                  fills=None,
                  strokes=None,
@@ -222,8 +229,8 @@ class Group(Frame):
 
 class Vector(Node):
     # A vector network, consisting of vertices and edges
-    def __init__(self, blendMode, constraints, absoluteBoundingBox, size, relativeTransform, fillGeometry,
-                 strokeWeight, strokeGeometry, strokeAlign, exportSettings=None, preserveRatio=False,
+    def __init__(self, blendMode, constraints, absoluteBoundingBox, size=None, relativeTransform=None, fillGeometry=None,
+                 strokeWeight=None, strokeGeometry=None, strokeAlign=None, exportSettings=None, preserveRatio=False,
                  transitionNodeID=None, opacity=1, transitionNodeDuration=None,
                  transitionEasing=None, layoutGrow=0, locked=False, layoutAlign=None, effects=None,
                  isMask=False, fills=None,
@@ -298,10 +305,10 @@ class RegularPolygon(Vector):
 
 
 class Rectangle(Vector):
-    # A rectangle [Shares properties of Vector plus corner_radius]
-    def __init__(self, corner_radius, rectangleCornerRadii, *args, **kwargs):
+    # A rectangle [Shares properties of Vector plus cornerRadius]
+    def __init__(self, cornerRadius=None, rectangleCornerRadii=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.corner_radius = corner_radius  # Radius of each corner of the rectangle
+        self.cornerRadius = cornerRadius  # Radius of each corner of the rectangle
         self.rectangleCornerRadii = rectangleCornerRadii
 
 
