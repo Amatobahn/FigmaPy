@@ -4,13 +4,13 @@ from enum import Enum
 
 class File:
     # JSON file contents from a file
-    def __init__(self, name, document, components, last_modified, thumbnail_url, schema_version, styles):
+    def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles):
         self.name = name  # File name
-        self.last_modified = last_modified  # Date file was last modified
-        self.thumbnail_url = thumbnail_url  # File thumbnail URL
-        self.document = document  # Document content from a file
+        self.lastModified = lastModified  # Date file was last modified
+        self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
+        self.document = Document(**document)  # Document content from a file
         self.components = components  # Document components from a file
-        self.schema_version = schema_version  # Schema version from a file
+        self.schemaVersion = schemaVersion  # Schema version from a file
         self.styles = styles  # Styles contained within a file
 
 
@@ -66,316 +66,326 @@ class ProjectFiles:
 # -------------------------------------------------------------------------
 # NODE PROPERTIES
 # -------------------------------------------------------------------------
-class Document:
+def serialise_children(children):
+    # this function only works if the children's paramaters' names returned by figma API,
+    # match the names of the properties in our Node classes
+
+    # children is an array of dicts defining figma nodes, example:
+
+    # "children": [
+    #       {
+    #         "backgroundColor": {
+    #           "a": 1,
+    #           "b": 0.8980392156862745,
+    #           "g": 0.8980392156862745,
+    #           "r": 0.8980392156862745
+    #         },
+    #         "children": [],
+    #         "exportSettings": [],
+    #         "id": "0:1",
+    #         "name": "Page 1",
+    #         "type": "CANVAS",
+    #         "visible": true
+    #       }
+    #     ],
+
+    if children is None:
+        return
+
+    # for every child, get the type and create the object
+    serialised_children = []
+    for child in children:
+        node_type = NodeTypes[child.get('type')]
+        node_type(**child)
+        serialised_children.append(node_type)
+    return serialised_children
+
+
+class Node:
+    def __init__(self,
+                 id,
+                 name,
+                 type,
+                 visible=True,
+                 pluginData=None,
+                 sharedPluginData=None,
+                 *args, **kwargs):
+        self.id = id  # A string uniquely identifying this node within the document.
+        self.name = name  # The name given to the node by the user in the tool.
+        self.visible = visible  # Whether or not the node is visible on the canvas.
+        self.type = type  # The type of the node
+        self.pluginData = pluginData  # Data written by plugins that is visible only to the plugin that wrote it. Requires the `pluginData` to include the ID of the plugin.
+        self.sharedPluginData = sharedPluginData  # Data written by plugins that is visible to all plugins. Requires the `pluginData` parameter to include the string "shared
+
+        if args or kwargs:
+            print("Node class has been instantiated with unsupported args and kwargs."
+                  "this is likely due to a change in the Figma API, or an unsupported parameter in this wrapper")
+            print(args, kwargs)
+
+
+class Document(Node):
     # The root node
-    def __init__(self, children):
-        self.children = children  # An array of canvases attached to the document
+    def __int__(self,
+                children,
+                *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.children = serialise_children(children)  # An array of canvases attached to the document
+
+    # def __init__(self, id, name, type, children, visible=True, pluginData=None, sharedPluginData=None):
+    #     super().__init__(id=id,
+    #                      name=name,
+    #                      type=type,
+    #                      visible=visible,
+    #                      pluginData=pluginData,
+    #                      sharedPluginData=sharedPluginData)
 
 
-class Canvas:
+class Canvas(Node):
     # Represents a single page
-    def __init__(self, children, background_color, export_settings=None):
-        self.children = children  # An array of top level layers on the canvas
-        self.background_color = background_color  # Background color of the canvas
-        self.export_settings = export_settings  # An array of export settings representing images to export. Default: []
+    def __init__(self,
+                 children,
+                 backgroundColor,
+                 flowStartingPoints=None,
+                 exportSettings=None,
+                 *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.children = serialise_children(children)  # An array of top level layers on the canvas
+        self.backgroundColor = backgroundColor  # Background color of the canvas
+        self.flowStartingPoints = flowStartingPoints  # An array of flow starting points sorted by its position in the prototype settings panel.
+        self.exportSettings = exportSettings  # An array of export settings representing images to export. Default: []
 
 
-class Frame:
+class Frame(Node):
     # A node of fixed size containing other nodes
-    def __init__(self, children, background_color, blend_mode, constraints, abs_bounding_box, size,
-                 relative_transform, clips_content, preserve_ratio=False, transition_node_id=None, opacity=1,
-                 layout_grids=None, effects=None, is_mask=False, export_settings=None):
-        self.children = children  # An array of nodes that are direct children of this node
-        self.background_color = background_color  # Background color of the node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
+    def __init__(self,
+                 children,
+                 background,
+                 backgroundColor,
+                 blendMode,
+                 constraints,
+                 absoluteBoundingBox,
+                 size,
+                 relativeTransform, clipsContent,
+                 locked=False,
+                 fills=None,
+                 strokes=None,
+                 strokeWeight=None,
+                 strokeAlign=None,
+                 cornerRadius=None,
+                 rectangleCornerRadii=None,
+                 preserveRatio=False,
+                 layoutAlign=None,
+                 transitionNodeID=None,
+                 transitionDuration=None,
+                 transitionEasing=None,
+                 opacity=1,
+                 layoutGrids=None,
+                 effects=None,
+                 isMask=False,
+                 exportSettings=None,
+                 *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.children = serialise_children(children)  # An array of nodes that are direct children of this node
+        self.locked = locked  # If true, layer is locked and cannot be edited
+        self.background = background  # [DEPRECATED] Background of the node. This is deprecated, as backgrounds for frames are now in the fills field.
+        self.backgroundColor = backgroundColor  # [DEPRECATED] Background color of the node. This is deprecated, as frames now support more than a solid color as a background. Please use the fills field instead.
+        self.fills = fills
+        self.strokes = strokes
+        self.strokeWeight = strokeWeight
+        self.strokeAlign = strokeAlign
+        self.cornerRadius = cornerRadius
+        self.rectangleCornerRadii = rectangleCornerRadii
+        self.exportSettings = exportSettings  # An array of export settings representing images to export from node
+        self.blendMode = blendMode  # How this node blends with nodes behind it in the scene
+        self.preserveRatio = preserveRatio  # Keep height and width constrained to same ratio
         self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.clips_content = clips_content  # Does this node clip content outside of its bounds?
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
+        self.layoutAlign = layoutAlign
+        self.transitionNodeID = transitionNodeID  # Node ID of node to transition to in prototyping
+        self.transitionDuration = transitionDuration 
+        self.transitionEasing = transitionEasing
         self.opacity = opacity  # Opacity of the node
-        self.layout_grids = layout_grids  # An array of layout grids attached to this node
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-
-
-class Group:
-    # A logical grouping of nodes [Holds properties of Frame except for layout_grids]
-    def __init__(self, children, background_color, blend_mode, constraints, abs_bounding_box, size,
-                 relative_transform, clips_content, preserve_ratio=False, transition_node_id=None, opacity=1,
-                 effects=None, is_mask=False, export_settings=None):
-        self.children = children  # An array of nodes that are direct children of this node
-        self.background_color = background_color  # Background color of the node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
+        self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.clips_content = clips_content  # Does this node clip content outside of its bounds?
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
+        self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry.
+        self.clipsContent = clipsContent  # Does this node clip content outside of its bounds?
+        # TODO add more fields
+        self.layoutGrids = layoutGrids  # An array of layout grids attached to this node
         self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
+        self.isMask = isMask  # Does this node mask sibling nodes in front of it?
 
 
-class Vector:
+class Group(Frame):
+    # A logical grouping of nodes [Holds properties of Frame except for layoutGrids]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class Vector(Node):
     # A vector network, consisting of vertices and edges
-    def __init__(self, blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
+    def __init__(self, blendMode, constraints, absoluteBoundingBox, size, relativeTransform, fillGeometry,
+                 strokeWeight, strokeGeometry, strokeAlign, exportSettings=None, preserveRatio=False,
+                 transitionNodeID=None, opacity=1, transitionNodeDuration=None,
+                 transitionEasing=None, layoutGrow=0, locked=False, layoutAlign=None, effects=None,
+                 isMask=False, fills=None,
+                 strokeJoin=None,
+                 strokes=None,
+                 strokeDashes=None,
+                 strokeMiterAngle=None,
+                 strokeCap=None,
+                 styles=None,
+                 *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.locked = locked  # If true, layer is locked and cannot be edited
+        self.exportSettings = exportSettings  # An array of export settings representing images to export from node
+        self.blendMode = blendMode  # How this node blends with nodes behind it in the scene
+        self.preserveRatio = preserveRatio  # Keep height and width constrained to same ratio
+        self.layoutAlign = layoutAlign
+        self.layoutGrow = layoutGrow
         self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
+        self.transitionNodeID = transitionNodeID  # Node ID of node to transition to in prototyping
+        self.transitionNodeDuration = transitionNodeDuration
+        self.transitionEasing = transitionEasing
         self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
+        self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
+        self.size = size  # Width and height of element. Only present if geometry=paths is passed
+        self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry.
+        self.isMask = isMask  # Does this node mask sibling nodes in front of it?
         self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
+        self.fillGeometry = fillGeometry  # An array of paths representing the object fill
         self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+        self.strokeWeight = strokeWeight  # The weight of strokes on the node
+        self.strokeCap = strokeCap
+        self.strokeJoin = strokeJoin
+        self.strokeDashes = strokeDashes
+        self.strokeMiterAngle = strokeMiterAngle
+        self.strokeGeometry = strokeGeometry  # An array of paths representing the object stroke
+        self.strokeAlign = strokeAlign  # Where stroke is drawn relative to vector outline as a string enum
+        self.styles = styles
 
 
-class Boolean:
+class BooleanOperation(Vector):
     # A vector network, consisting of vertices and edges
-    def __init__(self, children, blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
-        self.children = children  # An array of nodes that are being boolean operated on
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
-        self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+    def __init__(self, children, booleanOperation, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.children = serialise_children(children)  # An array of nodes that are direct children of this node
+        self.booleanOperation = booleanOperation
 
 
-class Star:
+class Star(Vector):
     # A regular star shape [Shares properties of Vector]
-    def __init__(self, blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
-        self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-class Line:
+class Line(Vector):
     # A straight line [Shares properties of Vector]
-    def __init__(self, blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
-        self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-class Ellipse:
+class Ellipse(Vector):
     # An ellipse [Shares properties of Vector]
-    def __init__(self, blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
-        self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+    def __init__(self, arcData, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.arcData = arcData
 
 
-class RegularPolygon:
+class RegularPolygon(Vector):
     # A regular n-sided polygon [Shares properties of Vector]
-    def __init__(self, blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
-        self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-class Rectangle:
+class Rectangle(Vector):
     # A rectangle [Shares properties of Vector plus corner_radius]
-    def __init__(self, corner_radius, blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
+    def __init__(self, corner_radius, rectangleCornerRadii, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.corner_radius = corner_radius  # Radius of each corner of the rectangle
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
-        self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+        self.rectangleCornerRadii = rectangleCornerRadii
 
 
-class Text:
+class Text(Vector):
     # A regular n-sided polygon [Shares properties of Vector]
-    # plus characters, style, character_style_overrides, and style_override_table
-    def __init__(self, characters, style, character_style_overrides, style_override_table,
-                 blend_mode, constraints, abs_bounding_box, size, relative_transform, fill_geometry,
-                 stroke_weight, stroke_geometry, stroke_align, export_settings=None, preserve_ratio=False,
-                 transition_node_id=None, opacity=1, effects=None, is_mask=False, fills=None, strokes=None):
+    # plus characters, style, characterStyleOverrides, and styleOverrideTable
+    def __init__(self, characters, style, characterStyleOverrides, styleOverrideTable, lineTypes, lineIndentations, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.characters = characters  # Text contained within text box
         self.style = style  # Style of text including font family and weight
-        self.character_style_overrides = character_style_overrides  # Array with same number of elements as characters
-        self.style_override_table = style_override_table  # Map from ID to TypeStyle for looking up style overrides
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.fills = fills  # An array of fill paints applied to the node
-        self.fill_geometry = fill_geometry  # An array of paths representing the object fill
-        self.strokes = strokes  # An array of stroke paints applied to the node
-        self.stroke_weight = stroke_weight  # The weight of strokes on the node
-        self.stroke_geometry = stroke_geometry  # An array of paths representing the object stroke
-        self.stroke_align = stroke_align  # Where stroke is drawn relative to vector outline as a string enum
+        self.characterStyleOverrides = characterStyleOverrides  # Array with same number of elements as characters
+        self.styleOverrideTable = styleOverrideTable  # Map from ID to TypeStyle for looking up style overrides
+        self.lineTypes = lineTypes
+        self.lineIndentations = lineIndentations
 
 
-class Slice:
+class Slice(Node):
     # A rectangular region of the canvas that can be exported
-    def __init__(self, export_settings, abs_bounding_box, size, relative_transform):
-        self.export_settings = export_settings  # An array of export settings of images to export from this node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
+    def __init__(self, exportSettings, absoluteBoundingBox, size, relativeTransform, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.exportSettings = exportSettings  # An array of export settings of images to export from this node
+        self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.size = size  # Width and height of element
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry
+        self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry
 
 
-class Component:
+class Component(Frame):
     # A node that can have instances created of it that share the same properties
-    def __init__(self, children, background_color, blend_mode, constraints, abs_bounding_box, size,
-                 relative_transform, clips_content, preserve_ratio=False, transition_node_id=None, opacity=1,
-                 layout_grids=None, effects=None, is_mask=False, export_settings=None):
-        self.children = children  # An array of nodes that are direct children of this node
-        self.background_color = background_color  # Background color of the node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.clips_content = clips_content  # Does this node clip content outside of its bounds?
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.layout_grids = layout_grids  # An array of layout grids attached to this node
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-class Instance:
+class ComponentSet(Frame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class Instance(Frame):
     # An instance of a component, changes to the component result in the same changes applied to the instance
-    def __init__(self, children, background_color, blend_mode, constraints, abs_bounding_box, size, component_id,
-                 relative_transform, clips_content, preserve_ratio=False, transition_node_id=None, opacity=1,
-                 layout_grids=None, effects=None, is_mask=False, export_settings=None):
+    def __init__(self, component_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.component_id = component_id  # ID of component that this instance came from - refers to components table
-        self.children = children  # An array of nodes that are direct children of this node
-        self.background_color = background_color  # Background color of the node
-        self.blend_mode = blend_mode  # How this node blends with nodes behind it in the scene
-        self.constraints = constraints  # Horizontal and vertical layout constraints for node
-        self.absolute_bounding_box = abs_bounding_box  # Bounding box of the node in absolute space coordinates
-        self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relative_transform = relative_transform  # Use to transform coordinates in geometry.
-        self.clips_content = clips_content  # Does this node clip content outside of its bounds?
-        self.preserve_ratio = preserve_ratio  # Keep height and width constrained to same ratio
-        self.transition_node_id = transition_node_id  # Node ID of node to transition to in prototyping
-        self.opacity = opacity  # Opacity of the node
-        self.layout_grids = layout_grids  # An array of layout grids attached to this node
-        self.effects = effects  # An array of effects attached to this node
-        self.is_mask = is_mask  # Does this node mask sibling nodes in front of it?
-        self.export_settings = export_settings  # An array of export settings representing images to export from node
 
+
+class Sticky(Node):
+    # FigJam Sticky node
+    # TODO
+    pass
+
+
+class ShapeWithText(Node):
+    # FigJam Shape-with-text node
+    # TODO
+    pass
+
+
+class Connector(Node):
+    # FigJam Connector node
+    # TODO
+    pass
+
+
+class NodeTypes(Enum):
+    # Enum describing node types
+    # This type is a string enum with the following possible values:
+    DOCUMENT = Document
+    CANVAS = Canvas
+    FRAME = Frame
+    GROUP = Group
+    VECTOR = Vector
+    BOOLEAN_OPERATION = BooleanOperation
+    STAR = Star
+    LINE = Line
+    ELLIPSE = Ellipse
+    REGULAR_POLYGON = RegularPolygon
+    RECTANGLE = Rectangle
+    TEXT = Text
+    SLICE = Slice
+    COMPONENT = Component
+    # COMPONENT_SET = ComponentSet
+    INSTANCE = Instance
+    # STICKY = Sticky
+    # SHAPE_WITH_TEXT = ShapeWithText
+    # CONNECTOR = Connector
 
 # -------------------------------------------------------------------------
 # FILE FORMAT TYPES
@@ -467,13 +477,13 @@ class LayoutGrid:
 
 class Effect:
     # A visual effect such as a shadow or blur
-    def __init__(self, type, visible, radius, color, blend_mode, offset):
+    def __init__(self, type, visible, radius, color, blendMode, offset):
         self.type = type  # Type of effect as a string enum
         self.visible = visible  # is the effect active?
         self.radius = radius  # Radius of the blur effect (applies to shadows as well)
         # The following properties are for shadows only:
         self.color = color  # The color of the shadow
-        self.blend_mode = blend_mode  # Blend mode of the shadow
+        self.blendMode = blendMode  # Blend mode of the shadow
         self.offset = offset  # How far the shadow is projected in the x and y directions
 
 
