@@ -79,14 +79,34 @@ class Node:
         self.pluginData = pluginData  # Data written by plugins that is visible only to the plugin that wrote it. Requires the `pluginData` to include the ID of the plugin.
         self.sharedPluginData = sharedPluginData  # Data written by plugins that is visible to all plugins. Requires the `pluginData` parameter to include the string "shared
 
+        self.deserialize_properties()
+
         if args or kwargs:
             print("Node class has been instantiated with unsupported args and kwargs."
                   "this is likely due to a change in the Figma API, or an unsupported parameter in this wrapper")
             print(args, kwargs)
 
-    @classmethod
-    def deserialize_nodes(cls, children):
-        return [cls.deserialize(child) for child in children]
+    def deserialize_properties(self):
+        """
+        deserialize properties to their matching type
+        """
+        if hasattr(self, 'exportSettings') and isinstance(self.exportSettings, dict) and self.exportSettings is not None:
+            self.exportSettings = ExportSetting(**self.exportSettings)
+        if hasattr(self, 'color') and isinstance(self.color, dict) and self.color is not None:
+            self.color = Color(**self.color)
+        if hasattr(self, 'constraint') and isinstance(self.constraint, dict) and self.constraint is not None:
+            self.constraint = Constraint(**self.constraint)
+        if hasattr(self, 'absoluteBoundingBox') and isinstance(self.absoluteBoundingBox, dict) and self.absoluteBoundingBox is not None:
+            self.absoluteBoundingBox = Rect(**self.absoluteBoundingBox)
+        if hasattr(self, 'blendMode') and isinstance(self.blendMode, str) and self.blendMode is not None:
+            self.blendMode = BlendMode[self.blendMode]
+
+        if hasattr(self, 'constraints') and isinstance(self.constraints, list) and self.constraints is not None:
+            self.constraints = [Constraint(**constraint) for constraint in self.constraints]
+        if hasattr(self, 'layoutGrids') and isinstance(self.layoutGrids, list) and self.layoutGrids is not None:
+            self.layoutGrids = [LayoutGrid(**grid) for grid in self.layoutGrids]
+        if hasattr(self, 'children') and isinstance(self.children, list) and self.children is not None:
+            self.children = [self.deserialize(child) for child in self.children]
 
     @staticmethod
     def deserialize(node_dict):
@@ -117,8 +137,8 @@ class Document(Node):
     def __init__(self,
                  children,
                  *args, **kwargs):
+        self.children = children  # An array of canvases attached to the document
         super().__init__(*args, **kwargs)
-        self.children = self.deserialize_nodes(children)  # An array of canvases attached to the document
 
 
 class Canvas(Node):
@@ -131,13 +151,13 @@ class Canvas(Node):
                  flowStartingPoints=None,
                  exportSettings=None,
                  *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.children = self.deserialize_nodes(children)  # An array of top level layers on the canvas
+        self.children = children  # An array of top level layers on the canvas
         self.backgroundColor = backgroundColor  # Background color of the canvas
         self.prototypeStartNodeID = prototypeStartNodeID  # DEPRECATED] Node ID that corresponds to the start frame for prototypes. This is deprecated with the introduction of multiple flows. Please use the flowStartingPoints field.
         self.prototypeDevice = prototypeDevice
         self.flowStartingPoints = flowStartingPoints  # An array of flow starting points sorted by its position in the prototype settings panel.
         self.exportSettings = exportSettings  # An array of export settings representing images to export. Default: []
+        super().__init__(*args, **kwargs)
 
 
 class Frame(Node):
@@ -183,8 +203,7 @@ class Frame(Node):
                  isMask=None,
                  layoutMode=None,
                  *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.children = self.deserialize_nodes(children)  # An array of nodes that are direct children of this node
+        self.children = children  # An array of nodes that are direct children of this node
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.background = background  # [DEPRECATED] Background of the node. This is deprecated, as backgrounds for frames are now in the fills field.
         self.backgroundColor = backgroundColor  # [DEPRECATED] Background color of the node. This is deprecated, as frames now support more than a solid color as a background. Please use the fills field instead.
@@ -223,6 +242,7 @@ class Frame(Node):
         self.overflowDirection = overflowDirection
         self.effects = effects  # An array of effects attached to this node
         self.isMask = isMask  # Does this node mask sibling nodes in front of it?
+        super().__init__(*args, **kwargs)
 
 
 class Group(Frame):
@@ -246,7 +266,6 @@ class Vector(Node):
                  strokeCap=None,
                  styles=None,
                  *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.exportSettings = exportSettings  # An array of export settings representing images to export from node
         self.blendMode = blendMode  # How this node blends with nodes behind it in the scene
@@ -274,14 +293,15 @@ class Vector(Node):
         self.strokeGeometry = strokeGeometry  # An array of paths representing the object stroke
         self.strokeAlign = strokeAlign  # Where stroke is drawn relative to vector outline as a string enum
         self.styles = styles
+        super().__init__(*args, **kwargs)
 
 
 class BooleanOperation(Vector):
     # A vector network, consisting of vertices and edges
     def __init__(self, children, booleanOperation, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.children = self.deserialize_nodes(children)  # An array of nodes that are direct children of this node
+        self.children = children  # An array of nodes that are direct children of this node
         self.booleanOperation = booleanOperation
+        super().__init__(*args, **kwargs)
 
 
 class Star(Vector):
@@ -312,9 +332,9 @@ class RegularPolygon(Vector):
 class Rectangle(Vector):
     # A rectangle [Shares properties of Vector plus cornerRadius]
     def __init__(self, cornerRadius=None, rectangleCornerRadii=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.cornerRadius = cornerRadius  # Radius of each corner of the rectangle
         self.rectangleCornerRadii = rectangleCornerRadii
+        super().__init__(*args, **kwargs)
 
 
 class Text(Vector):
@@ -322,23 +342,23 @@ class Text(Vector):
     # plus characters, style, characterStyleOverrides, and styleOverrideTable
     def __init__(self, characters, style, characterStyleOverrides, styleOverrideTable, lineTypes, lineIndentations,
                  *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.characters = characters  # Text contained within text box
         self.style = style  # Style of text including font family and weight
         self.characterStyleOverrides = characterStyleOverrides  # Array with same number of elements as characters
         self.styleOverrideTable = styleOverrideTable  # Map from ID to TypeStyle for looking up style overrides
         self.lineTypes = lineTypes
         self.lineIndentations = lineIndentations
+        super().__init__(*args, **kwargs)
 
 
 class Slice(Node):
     # A rectangular region of the canvas that can be exported
     def __init__(self, exportSettings, absoluteBoundingBox, size, relativeTransform, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.exportSettings = exportSettings  # An array of export settings of images to export from this node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.size = size  # Width and height of element
         self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry
+        super().__init__(*args, **kwargs)
 
 
 class Component(Frame):
@@ -480,14 +500,14 @@ class LayoutConstraint:
 
 class LayoutGrid:
     # Guides to align and place objects within a frame
-    def __init__(self, pattern, section_size, visible, color, alignment, gutter_size, offset, count):
+    def __init__(self, pattern, sectionSize, visible, color, alignment, gutterSize, offset, count):
         self.pattern = pattern  # Orientatoin of the grid as a string enum
-        self.section_size = section_size  # Width of column grid or height of row grid or square grid spacing
+        self.sectionSize = sectionSize  # Width of column grid or height of row grid or square grid spacing
         self.visible = visible  # Is the grid currently visible?
-        self.color = color  # Color of the grid
+        self.color = color # Color of the grid
         # The following properties are only meaningful for directional grids (COLUMNS or ROWS)
         self.alignment = alignment  # Positioning of grid as a string enum
-        self.gutter_size = gutter_size  # Spacing in between columns and rows
+        self.gutterSize = gutterSize  # Spacing in between columns and rows
         self.offset = offset  # Spacing before the first column or row
         self.count = count  # Number of columns or rows
 
@@ -499,24 +519,23 @@ class Effect:
         self.visible = visible  # is the effect active?
         self.radius = radius  # Radius of the blur effect (applies to shadows as well)
         # The following properties are for shadows only:
-        self.color = color  # The color of the shadow
+        self.color = color # The color of the shadow
         self.blendMode = blendMode  # Blend mode of the shadow
         self.offset = offset  # How far the shadow is projected in the x and y directions
 
 
 class Paint:
     # A solid color, gradient, or image texture that can be applied as fills or strokes
-    def __init__(self, type, color, gradient_handle_positions, gradient_stops, scale_mode,
-                 visible=True, opacity=1):
+    def __init__(self, type, color, gradientHandlePositions, gradientStops, scaleMode, visible=True, opacity=1):
         self.type = type  # Type of paint as a string enum
         self.visible = visible  # Is the paint enabled?
         self.opacity = opacity  # Overall opacity of paint (colors within the paint can also have opacity values)
-        self.color = color  # Solid color of the paint
+        self.color = color # Solid color of the paint
         # For gradient paints:
-        self.gradient_handle_positions = gradient_handle_positions  # Three vectors, each are pos in normalized space
-        self.gradient_stops = gradient_stops  # Positions of key points along the gradient axis with the anchored colors
+        self.gradientHandlePositions = gradientHandlePositions  # Three vectors, each are pos in normalized space
+        self.gradientStops = gradientStops  # Positions of key points along the gradient axis with the anchored colors
         # For image paints:
-        self.scale_mode = scale_mode  # Image scaling mode
+        self.scaleMode = scaleMode  # Image scaling mode
 
 
 class Vector2d:
@@ -532,25 +551,26 @@ class Transform:
         self.matrix = matrix  # Transformation matrix
 
 
-class Path:
-    # A vector path
-    def __init__(self, path, winding_rule):
-        self.path = path  # A sequence of path commands in SVG notation
-        self.winding_rule = winding_rule  # Winding rule for the path, either 'EVENODD' or 'NONZERO'
+# seems to be removed from figmaAPI
+# class Path:
+#     # A vector path
+#     def __init__(self, path, winding_rule):
+#         self.path = path  # A sequence of path commands in SVG notation
+#         self.winding_rule = winding_rule  # Winding rule for the path, either 'EVENODD' or 'NONZERO'
 
 
 class FrameOffset:
     # A relative offset within a frame
-    def __init__(self, node_id, node_offset):
+    def __init__(self, nodeId, nodeOffset):
         self.node_id = node_id  # Unique id specifying the frame
-        self.node_offset = node_offset  # 2d vector offset within the frame
+        self.nodeOffset = Vector2d(**nodeOffset)  # 2d vector offset within the frame
 
 
 class ColorStop:
     # A position color pair representing a gradient stop
     def __init__(self, position, color):
         self.position = position  # Value between 0 and 1 representing position along gradient axis
-        self.color = color  # Color attached to corresponding position
+        self.color = color # Color attached to corresponding position
 
 
 class TypeStyle:
