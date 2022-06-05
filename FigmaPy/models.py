@@ -85,6 +85,7 @@ class Node:
             print("Node class has been instantiated with unsupported args and kwargs."
                   "this is likely due to a change in the Figma API, or an unsupported parameter in this wrapper")
             print(args, kwargs)
+            print(self)
 
     def deserialize_properties(self):
         """
