@@ -572,9 +572,9 @@ class Transform:
 
 class FrameOffset:
     # A relative offset within a frame
-    def __init__(self, nodeId, nodeOffset):
+    def __init__(self, node_id, node_offset):
         self.node_id = node_id  # Unique id specifying the frame
-        self.nodeOffset = Vector2d(**nodeOffset)  # 2d vector offset within the frame
+        self.node_offset = Vector2d(**node_offset)  # 2d vector offset within the frame
 
 
 class ColorStop:
