@@ -107,6 +107,10 @@ class Node:
             self.layoutGrids = [LayoutGrid(**grid) for grid in self.layoutGrids]
         if hasattr(self, 'children') and isinstance(self.children, list) and self.children is not None:
             self.children = [self.deserialize(child) for child in self.children]
+        if hasattr(self, 'fillGeometry') and isinstance(self.fillGeometry, list) and self.fillGeometry is not None:
+            self.fillGeometry = [Path(**path) for path in self.fillGeometry]
+        if hasattr(self, 'strokeGeometry') and isinstance(self.strokeGeometry, list) and self.strokeGeometry is not None:
+            self.strokeGeometry = [Path(**path) for path in self.strokeGeometry]
 
     @staticmethod
     def deserialize(node_dict):
@@ -562,12 +566,13 @@ class Transform:
         self.matrix = matrix  # Transformation matrix
 
 
-# seems to be removed from figmaAPI
-# class Path:
-#     # A vector path
-#     def __init__(self, path, winding_rule):
-#         self.path = path  # A sequence of path commands in SVG notation
-#         self.winding_rule = winding_rule  # Winding rule for the path, either 'EVENODD' or 'NONZERO'
+# not documented in the usual figma doc page: https://www.figma.com/developers/api
+# instead see https://www.figma.com/plugin-docs/api/VectorPath/#docsNav
+class Path:
+    # A vector path
+    def __init__(self, path, windingRule):
+        self.path = path  # A sequence of path commands in SVG notation
+        self.windingRule = windingRule  # Winding rule for the path, either 'EVENODD' or 'NONZERO'
 
 
 class FrameOffset:
