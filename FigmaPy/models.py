@@ -126,6 +126,17 @@ class Node:
         node = node_type.value(**node_dict)
         return node
 
+    def get_children_recursively(self):
+        """
+        get all children of this node, recursively.
+        """
+        nodes_found = []
+        for node in self.children:
+            nodes_found.append(node)
+            if hasattr(node, 'children'):
+                node.get_children_recursively()
+        return nodes_found
+
     # @staticmethod
     # def serialize(node):
     #     raise NotImplementedError
