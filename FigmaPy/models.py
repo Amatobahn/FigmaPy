@@ -357,6 +357,7 @@ class Text(Vector):
     # A regular n-sided polygon [Shares properties of Vector]
     # plus characters, style, characterStyleOverrides, and styleOverrideTable
     def __init__(self, characters, style, characterStyleOverrides, styleOverrideTable, lineTypes, lineIndentations,
+                 layoutVersion=None,
                  *args, **kwargs):
         self.characters = characters  # Text contained within text box
         self.style = style  # Style of text including font family and weight
@@ -364,6 +365,7 @@ class Text(Vector):
         self.styleOverrideTable = styleOverrideTable  # Map from ID to TypeStyle for looking up style overrides
         self.lineTypes = lineTypes
         self.lineIndentations = lineIndentations
+        self.layoutVersion = layoutVersion  # -> int, not documented in figma API
         super().__init__(*args, **kwargs)
 
 
