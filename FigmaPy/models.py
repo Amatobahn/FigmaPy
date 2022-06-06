@@ -445,10 +445,10 @@ class ComponentSet(Frame):
 
 
 class Instance(Frame):
-    # An instance of a component, changes to the component result in the same changes applied to the instance
-    def __init__(self, component_id, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, component_id=None, *args, **kwargs):
+        # unsure if component_id is still used. setting default to None since it was not passed in my tests
         self.component_id = component_id  # ID of component that this instance came from - refers to components table
+        super().__init__(*args, **kwargs)
 
 
 class Sticky(Node):
