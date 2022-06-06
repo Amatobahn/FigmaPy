@@ -1,4 +1,5 @@
 # API Scope Resource Objects
+import pprint
 from enum import Enum
 
 
@@ -21,20 +22,65 @@ COMPONENTS (metadata / styles in a team library)
 requested data is returned as a dict / JSON
 this python wrapper is used to convert the dict to a python object, and adds meta data such as parent of node
 """
+
+def deserialize_properties(self):
+    """
+    deserialize properties to their matching type
+    """
+    if hasattr(self, 'color') and isinstance(self.color, dict) and self.color is not None:
+        self.color = Color(**self.color)
+    if hasattr(self, 'constraint') and isinstance(self.constraint, dict) and self.constraint is not None:
+        self.constraint = Constraint(**self.constraint)
+    if hasattr(self, 'absoluteBoundingBox') and isinstance(self.absoluteBoundingBox,
+                                                           dict) and self.absoluteBoundingBox is not None:
+        self.absoluteBoundingBox = Rect(**self.absoluteBoundingBox)
+    if hasattr(self, 'blendMode') and isinstance(self.blendMode, str) and self.blendMode is not None:
+        self.blendMode = BlendMode[self.blendMode]
+
+    if hasattr(self, 'constraints') and isinstance(self.constraints, list) and self.constraints is not None:
+        self.constraints = [Constraint(**constraint) for constraint in self.constraints]
+    if hasattr(self, 'layoutGrids') and isinstance(self.layoutGrids, list) and self.layoutGrids is not None:
+        self.layoutGrids = [LayoutGrid(**grid) for grid in self.layoutGrids]
+    if hasattr(self, 'children') and isinstance(self.children, list) and self.children is not None:
+        self.children = [self.deserialize(child) for child in self.children]
+        if self:
+            for child in self.children:
+                child.parent = self
+    if hasattr(self, 'fillGeometry') and isinstance(self.fillGeometry, list) and self.fillGeometry is not None:
+        self.fillGeometry = [Path(**path) for path in self.fillGeometry]
+    if hasattr(self, 'strokeGeometry') and isinstance(self.strokeGeometry, list) and self.strokeGeometry is not None:
+        self.strokeGeometry = [Path(**path) for path in self.strokeGeometry]
+    if hasattr(self, 'exportSettings') and isinstance(self.exportSettings, list) and self.exportSettings is not None:
+        self.exportSettings = [ExportSetting(**setting) for setting in self.exportSettings]
+    if hasattr(self, 'fills') and isinstance(self.fills, list) and self.fills is not None:
+        self.fills = [Paint(**paint, pythonParent=self) for paint in self.fills]
+    if hasattr(self, 'strokes') and isinstance(self.strokes, list) and self.strokes is not None:
+        self.strokes = [Paint(**paint, pythonParent=self) for paint in self.strokes]
+    if hasattr(self, 'effects') and isinstance(self.effects, list) and self.effects is not None:
+        self.effects = [Effect(**effect) for effect in self.effects]
+
+
 class File:
     # JSON file contents from a file
-    def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles):
+    def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles, file_key=None, pythonParent=None):
         self.name = name  # File name
         self.lastModified = lastModified  # Date file was last modified
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
-        self.document = Document(**document)  # Document content from a file
+        self.document = Document(**document, pythonParent=self)  # Document content from a file
         self.components = components  # Document components from a file
         self.schemaVersion = schemaVersion  # Schema version from a file
         self.styles = styles  # Styles contained within a file
 
+        # python helpers
+        self.file_key = file_key
+        self.pythonParent = pythonParent
+
+    def get_file_key(self):
+        return self.file_key
 
 class FileImages:
     # URLs for server-side rendered images from a file
+    # https://www.figma.com/developers/api#get-images-endpoint
     def __init__(self, images, err):
         self.err = err  # Error type as enum string
         self.images = images  # URLs of server-side rendered images from a file
@@ -90,7 +136,8 @@ class ProjectFiles:
 # see https://www.figma.com/developers/api#node-types
 
 class Node:
-    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, *args, **kwargs):
+    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, pythonParent=None, *args, **kwargs):
+        # figma data
         self.id = id  # A string uniquely identifying this node within the document.
         self.name = name  # The name given to the node by the user in the tool.
         self.visible = visible  # Whether or not the node is visible on the canvas.
@@ -98,6 +145,8 @@ class Node:
         self.pluginData = pluginData  # Data written by plugins that is visible only to the plugin that wrote it. Requires the `pluginData` to include the ID of the plugin.
         self.sharedPluginData = sharedPluginData  # Data written by plugins that is visible to all plugins. Requires the `pluginData` parameter to include the string "shared
 
+        # python helpers
+        self.pythonParent = pythonParent  # The python parent of this node. which holds this node.
         self.deserialize_properties()
 
         if args or kwargs:
@@ -110,30 +159,10 @@ class Node:
         """
         deserialize properties to their matching type
         """
-        if hasattr(self, 'exportSettings') and isinstance(self.exportSettings, dict) and self.exportSettings is not None:
-            self.exportSettings = ExportSetting(**self.exportSettings)
-        if hasattr(self, 'color') and isinstance(self.color, dict) and self.color is not None:
-            self.color = Color(**self.color)
-        if hasattr(self, 'constraint') and isinstance(self.constraint, dict) and self.constraint is not None:
-            self.constraint = Constraint(**self.constraint)
-        if hasattr(self, 'absoluteBoundingBox') and isinstance(self.absoluteBoundingBox, dict) and self.absoluteBoundingBox is not None:
-            self.absoluteBoundingBox = Rect(**self.absoluteBoundingBox)
-        if hasattr(self, 'blendMode') and isinstance(self.blendMode, str) and self.blendMode is not None:
-            self.blendMode = BlendMode[self.blendMode]
+        return deserialize_properties(self)
 
-        if hasattr(self, 'constraints') and isinstance(self.constraints, list) and self.constraints is not None:
-            self.constraints = [Constraint(**constraint) for constraint in self.constraints]
-        if hasattr(self, 'layoutGrids') and isinstance(self.layoutGrids, list) and self.layoutGrids is not None:
-            self.layoutGrids = [LayoutGrid(**grid) for grid in self.layoutGrids]
-        if hasattr(self, 'children') and isinstance(self.children, list) and self.children is not None:
-            self.children = [self.deserialize(child) for child in self.children]
-        if hasattr(self, 'fillGeometry') and isinstance(self.fillGeometry, list) and self.fillGeometry is not None:
-            self.fillGeometry = [Path(**path) for path in self.fillGeometry]
-        if hasattr(self, 'strokeGeometry') and isinstance(self.strokeGeometry, list) and self.strokeGeometry is not None:
-            self.strokeGeometry = [Path(**path) for path in self.strokeGeometry]
 
-    @staticmethod
-    def deserialize(node_dict):
+    def deserialize(self, node_dict):
         """
         convert a json/dict into a figma node
 
@@ -147,7 +176,7 @@ class Node:
         if node_dict is None:
             return
         node_type = NodeTypes[node_dict.get('type')]
-        node = node_type.value(**node_dict)
+        node = node_type.value(**node_dict, pythonParent=self)
         return node
 
     def get_children_recursively(self):
@@ -165,6 +194,9 @@ class Node:
     # def serialize(node):
     #     raise NotImplementedError
     #     # TODO: implement
+
+    def get_file_key(self):
+        return get_file_key(self)
 
 
 class Document(Node):
@@ -563,16 +595,75 @@ class Effect:
 
 class Paint:
     # A solid color, gradient, or image texture that can be applied as fills or strokes
-    def __init__(self, type, color, gradientHandlePositions, gradientStops, scaleMode, visible=True, opacity=1):
+    def __init__(self, type,
+                 color=None,
+                 gradientHandlePositions=None,
+                 gradientStops=None,
+                 scaleMode=None,
+                 blendMode=None,
+                 imageTransform=None,
+                 scalingFactor=None,
+                 rotation=None,
+                 imageRef=None,
+                 filters=None,
+                 gifRef=None,
+                 visible=True,
+                 opacity=1,
+                 pythonParent=None):
         self.type = type  # Type of paint as a string enum
         self.visible = visible  # Is the paint enabled?
         self.opacity = opacity  # Overall opacity of paint (colors within the paint can also have opacity values)
-        self.color = color # Solid color of the paint
+        self.blendMode = blendMode
+
+        # For solid paints:
+        self.color = color  # Solid color of the paint
+
         # For gradient paints:
         self.gradientHandlePositions = gradientHandlePositions  # Three vectors, each are pos in normalized space
         self.gradientStops = gradientStops  # Positions of key points along the gradient axis with the anchored colors
+
         # For image paints:
         self.scaleMode = scaleMode  # Image scaling mode
+        self.imageTransform = imageTransform
+        self.scalingFactor = scalingFactor
+        self.rotation = rotation
+        self.imageRef = imageRef
+        self.filters = filters
+        self.gifRef = gifRef
+
+        # todo move to decorator
+        self.pythonParent = pythonParent
+
+    def get_image_url(self):
+        """get url of image"""
+        if self.imageRef is None:
+            return
+
+        # TODO get attr from parent
+        root_parent = self.pythonParent  # get FigmaPy instance
+        while hasattr(root_parent, 'pythonParent'):
+            root_parent = root_parent.pythonParent
+
+        file_images = root_parent.get_file_images(file_key=self.get_file_key(),
+                                                  ids=[self.pythonParent.id],
+                                                  format='svg')
+
+        # img_url_dict = root_parent.get_image_fills(file_key=self.get_file_key())
+        # return img_url_dict['meta']['images'][self.imageRef]
+
+
+
+    # todo property get setter
+    def get_file_key(self):
+        return get_file_key(self)
+
+
+# todo property get setter
+def get_file_key(node):
+    if hasattr(node, 'file_key'):
+        return node.file_key
+    # return pythonParent.file_key  # todo property get setter
+    return node.pythonParent.get_file_key()
 
 
 class Vector2d:
@@ -626,6 +717,8 @@ class TypeStyle:
         self.fills = fills  # Paints applied to characters
         self.line_height_px = line_height_px  # Line height in px
         self.line_height_percent = line_height_percent  # Line height as a percentage of normal line height
+
+        deserialize_properties(self)
 
 
 class ComponentDescription:

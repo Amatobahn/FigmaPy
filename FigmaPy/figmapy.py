@@ -99,7 +99,7 @@ class FigmaPy:
         data = self.api_request('files/{0}{1}'.format(file_key, optional_data), method='get')
         if data is not None:
             return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
-                        data['schemaVersion'], data['styles'])
+                        data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=self)
 
     """
     Get the version history of a file.
