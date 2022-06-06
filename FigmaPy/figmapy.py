@@ -101,6 +101,67 @@ class FigmaPy:
             return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
                         data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=self)
 
+    # https://www.figma.com/developers/api#get-file-nodes-endpoint
+    def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
+        """
+        file_key: String, File to export JSON from
+        ids: List of strings, A comma separated list of node IDs to retrieve and convert
+        version: String, A specific version ID to get. Omitting this will get the current version of the file
+        depth: Number, Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes
+        geometry: String, Set to "paths" to export vector data
+        plugin_data: String, A comma separated list of plugin IDs and/or the string "shared". Any data present in the document written by those plugins will be included in the result in the `pluginData` and `sharedPluginData` properties.
+        """
+        optional_data = ''
+        if depth:
+            optional_data += f'&depth={depth}'
+        if version:
+            optional_data += f'&version={version}'
+        if geometry:
+            optional_data += f'&geometry={geometry}'
+        if plugin_data:
+            optional_data += f'&plugin_data={plugin_data}'
+
+        id_array = []
+        for id in ids:
+            id_array.append(id)
+        id_list = ','.join(id_array)
+
+        data = self.api_request(f'files/{file_key}/nodes?ids={id_list}{optional_data}', method='get')
+        return data
+        # get partial JSON, only relevant data for the node. includes parent data.
+        # nodes data can be accessed with data['nodes']
+
+     # https://www.figma.com/developers/api#get-images-endpoint
+    def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
+        """
+        Get urls for server-side rendered images from a file.
+        If the node is not an image, a rasterized version of the node will be returned.
+        """
+        optional_data = ''
+        if scale is not None or format is not None or version is not None:
+            if scale is not None:
+                optional_data += '&scale={0}'.format(str(scale))
+            if format is not None:
+                optional_data += '&format={0}'.format(str(format))
+            if version is not None:
+                optional_data += '&version={0}'.format(str(version))
+        id_array = []
+        for id in ids:
+            id_array.append(id)
+        id_list = ','.join(id_array)
+        data = self.api_request('images/{0}?ids={1}{2}'.format(file_key, id_list, optional_data), method='get')
+        if data is not None:
+            return FileImages(data['images'], data['err'])
+
+    # https://www.figma.com/developers/api#get-image-fills-endpoint
+    def get_image_fills(self, file_key):
+        """
+        Get urls for source images from a file. a fill is a user provided image
+        """
+        data = self.api_request(f'files/{file_key}/images', method='get')
+        if data is not None:
+            return data
+
     """
     Get the version history of a file.
     """
@@ -131,28 +192,6 @@ class FigmaPy:
             return Comment(data['id'], data['file_key'], data['parent_id'], data['user'], data['created_at'],
                            data['resolved_at'], data['message'], data['client_meta'], data['order_id'])
 
-    # -------------------------------------------------------------------------
-    # SCOPE: IMAGES
-    # -------------------------------------------------------------------------
-    """
-    Get urls for server-side rendered images from a file.
-    """
-    def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
-        optional_data = ''
-        if scale is not None or format is not None or version is not None:
-            if scale is not None:
-                optional_data += '&scale={0}'.format(str(scale))
-            if format is not None:
-                optional_data += '&format={0}'.format(str(format))
-            if version is not None:
-                optional_data += '&version={0}'.format(str(version))
-        id_array = []
-        for id in ids:
-            id_array.append(id)
-        id_list = ','.join(id_array)
-        data = self.api_request('images/{0}?ids={1}{2}'.format(file_key, id_list, optional_data), method='get')
-        if data is not None:
-            return FileImages(data['images'], data['err'])
 
     # -------------------------------------------------------------------------
     # SCOPE: TEAMS
