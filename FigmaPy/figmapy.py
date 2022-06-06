@@ -78,11 +78,6 @@ class FigmaPy:
             print('HTTP Error occurred while trying to generate access token.')
             return None
 
-    """
-    Returns API user's access token
-    """
-    def get_access_token(self):
-        return self.api_token
 
     # -------------------------------------------------------------------------
     # SCOPE: FILES
