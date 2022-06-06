@@ -450,8 +450,21 @@ class Instance(Frame):
 
 class Sticky(Node):
     # FigJam Sticky node
-    def __init__(self, *args, **kwargs):
-        raise NotImplementedError("Sticky is not implemented yet")
+    def __init__(self, absoluteBoundingBox=None, authorVisible=None, backgroundColor=None, blendMode=None,
+                 characters=None, effects=None, exportSettings=None, fills=None, isMask=None,
+                 locked=None, opacity=None, relativeTransform=None, *args, **kwargs):
+        self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        self.authorVisible = authorVisible  # Boolean: If true, author name is visible.
+        self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
+        self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
+        self.characters = characters  # String: Text contained within a text box
+        self.effects = effects  # Effect[]: An array of effects attached to this node (see effects section for more details)
+        self.exportSettings = exportSettings  # ExportSetting[]: An array of export settings representing images to export from the node
+        self.fills = fills  # Paint[]: An array of fill paints applied to the node
+        self.isMask = isMask  # Boolean: Does this node mask sibling nodes in front of it?
+        self.locked = locked  # Boolean: If true, sticky is locked and cannot be edited
+        self.opacity = opacity  # Number: Overall opacity of paint (colors within the paint can also have opacity values which would blend with this)
+        self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
         super().__init__(*args, **kwargs)
 
 
