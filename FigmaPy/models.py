@@ -500,9 +500,36 @@ class ShapeWithText(Node):
 
 
 class Connector(Node):
-    # FigJam Connector node
-    def __init__(self, *args, **kwargs):
-        raise NotImplementedError("Connector is not implemented yet")
+    def __init__(self,
+                 absoluteBoundingBox=None,
+                 backgroundColor=None, blendMode=None, characters=None, connectorStart=None, connectorEnd=None,
+                 connectorLineType=None, cornerRadius=None, rectangleCornerRadii=None, effects=None,
+                 exportSettings=None, fills=None, isMask=None,
+                 locked=None, opacity=None, strokes=None, strokeWeight=None, strokeCap=None, strokeJoin=None,
+                 strokeDashes=None, strokeAlign=None, relativeTransform=None, textBackground=None, *args, **kwargs):
+        self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
+        self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
+        self.characters = characters  # String: Text contained within a text box
+        self.connectorStart = connectorStart  # ConnectorEndpoint: Connector starting endpoint.
+        self.connectorEnd = connectorEnd  # ConnectorEndpoint: Connector ending endpoint.
+        self.connectorLineType = connectorLineType
+        self.cornerRadius = cornerRadius  # Number: Radius of each corner of the rectangle if a single radius is set for all corners
+        self.rectangleCornerRadii = rectangleCornerRadii  # Number[] default: []
+        self.effects = effects  # Effect[] default: []
+        self.exportSettings = exportSettings  # ExportSetting[] default: []
+        self.fills = fills  # Paint[] default: []
+        self.isMask = isMask  # Boolean: Does this node mask sibling nodes in front of it?
+        self.locked = locked  # Boolean: If true, connector is locked and cannot be edited
+        self.opacity = opacity  # Number: Overall opacity of paint (colors within the paint can also have opacity values which would blend with this)
+        self.strokes = strokes  # Paint[] default: []
+        self.strokeWeight = strokeWeight  # Number: The weight of strokes on the node
+        self.strokeCap = strokeCap  # String: A string enum with value of "NONE", "ROUND", "SQUARE", "LINE_ARROW", or "TRIANGLE_ARROW", describing the end caps of vector paths.
+        self.strokeJoin = strokeJoin  # String: A string enum with value of "MITER", "BEVEL", or "ROUND", describing how corners in vector paths are rendered.
+        self.strokeDashes = strokeDashes  # Number[] default: []
+        self.strokeAlign = strokeAlign  # String: Position of stroke relative to vector outline, as a string enum
+        self.textBackground = textBackground  # ConnectorTextBackground: Connector text background.
+        self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
         super().__init__(*args, **kwargs)
 
 
