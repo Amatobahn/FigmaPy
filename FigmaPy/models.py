@@ -23,6 +23,7 @@ requested data is returned as a dict / JSON
 this python wrapper is used to convert the dict to a python object, and adds meta data such as parent of node
 """
 
+
 def deserialize_properties(self):
     """
     deserialize properties to their matching type
@@ -62,7 +63,8 @@ def deserialize_properties(self):
 
 class File:
     # JSON file contents from a file
-    def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles, file_key=None, pythonParent=None):
+    def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles, file_key=None,
+                 pythonParent=None):
         self.name = name  # File name
         self.lastModified = lastModified  # Date file was last modified
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
@@ -77,6 +79,7 @@ class File:
 
     def get_file_key(self):
         return self.file_key
+
 
 class FileImages:
     # URLs for server-side rendered images from a file
@@ -136,7 +139,8 @@ class ProjectFiles:
 # see https://www.figma.com/developers/api#node-types
 
 class Node:
-    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, pythonParent=None, *args, **kwargs):
+    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, pythonParent=None, *args,
+                 **kwargs):
         # figma data
         self.id = id  # A string uniquely identifying this node within the document.
         self.name = name  # The name given to the node by the user in the tool.
@@ -160,7 +164,6 @@ class Node:
         deserialize properties to their matching type
         """
         return deserialize_properties(self)
-
 
     def deserialize(self, node_dict):
         """
@@ -449,7 +452,6 @@ class Instance(Frame):
 
 
 class Sticky(Node):
-    # FigJam Sticky node
     def __init__(self, absoluteBoundingBox=None, authorVisible=None, backgroundColor=None, blendMode=None,
                  characters=None, effects=None, exportSettings=None, fills=None, isMask=None,
                  locked=None, opacity=None, relativeTransform=None, *args, **kwargs):
@@ -637,7 +639,7 @@ class LayoutGrid:
         self.pattern = pattern  # Orientatoin of the grid as a string enum
         self.sectionSize = sectionSize  # Width of column grid or height of row grid or square grid spacing
         self.visible = visible  # Is the grid currently visible?
-        self.color = color # Color of the grid
+        self.color = color  # Color of the grid
         # The following properties are only meaningful for directional grids (COLUMNS or ROWS)
         self.alignment = alignment  # Positioning of grid as a string enum
         self.gutterSize = gutterSize  # Spacing in between columns and rows
@@ -653,7 +655,7 @@ class Effect:
         self.radius = radius  # Radius of the blur effect (applies to shadows as well)
 
         # The following properties are for shadows only:
-        self.color = color # The color of the shadow
+        self.color = color  # The color of the shadow
         self.blendMode = blendMode  # Blend mode of the shadow
         self.offset = offset  # How far the shadow is projected in the x and y directions
         self.spread = spread
@@ -718,8 +720,6 @@ class Paint:
         # img_url_dict = root_parent.get_image_fills(file_key=self.get_file_key())
         # return img_url_dict['meta']['images'][self.imageRef]
 
-
-
     # todo property get setter
     def get_file_key(self):
         return get_file_key(self)
@@ -766,7 +766,7 @@ class ColorStop:
     # A position color pair representing a gradient stop
     def __init__(self, position, color):
         self.position = position  # Value between 0 and 1 representing position along gradient axis
-        self.color = color # Color attached to corresponding position
+        self.color = color  # Color attached to corresponding position
 
 
 class TypeStyle:
