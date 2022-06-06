@@ -78,14 +78,14 @@ class FigmaPy:
             print('HTTP Error occurred while trying to generate access token.')
             return None
 
-
     # -------------------------------------------------------------------------
     # SCOPE: FILES
     # -------------------------------------------------------------------------
-    """
-    Get the JSON file contents for a file.
-    """
+    # https://www.figma.com/developers/api#get-files-endpoint
     def get_file(self, file_key, geometry=None, version=None):
+        """
+        Get the JSON file contents for a file.
+        """
         optional_data = ''
         if geometry is not None or version is not None:
             optional_data = '?'
