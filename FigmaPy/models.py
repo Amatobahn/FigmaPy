@@ -469,9 +469,33 @@ class Sticky(Node):
 
 
 class ShapeWithText(Node):
-    # FigJam Shape-with-text node
-    def __init__(self, *args, **kwargs):
-        raise NotImplementedError("ShapeWithText is not implemented")
+    def __init__(self,
+                 absoluteBoundingBox=None,
+                 backgroundColor=None, blendMode=None, characters=None, cornerRadius=None, rectangleCornerRadii=None,
+                 effects=None, exportSettings=None, fills=None, isMask=None,
+                 locked=None, opacity=None, shapeType=None, strokes=None, strokeWeight=None, strokeCap=None,
+                 strokeJoin=None, strokeDashes=None, strokeAlign=None, relativeTransform=None,
+                 *args, **kwargs):
+        self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
+        self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
+        self.characters = characters  # String: Text contained within a text box
+        self.cornerRadius = cornerRadius  # Number: Radius of each corner of the rectangle if a single radius is set for all corners
+        self.rectangleCornerRadii = rectangleCornerRadii  # Number[]: Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise
+        self.effects = effects  # Effect[]: An array of effects attached to this node (see effects section for more details)
+        self.exportSettings = exportSettings  # ExportSetting[]: An array of export settings representing images to export from the node
+        self.fills = fills  # Paint[]: An array of fill paints applied to the node
+        self.isMask = isMask  # Boolean: Does this node mask sibling nodes in front of it?
+        self.locked = locked  # Boolean: If true, sticky is locked and cannot be edited
+        self.opacity = opacity  # Number: Overall opacity of paint (colors within the paint can also have opacity values which would blend with this)
+        self.shapeType = shapeType  # ShapeType: Shape-with-text geometric shape type.
+        self.strokes = strokes  # Paint[]: An array of stroke paints applied to the node
+        self.strokeWeight = strokeWeight  # Number: The weight of strokes on the node
+        self.strokeCap = strokeCap  # String: A string enum with value of "NONE", "ROUND", "SQUARE", "LINE_ARROW", or "TRIANGLE_ARROW", describing the end caps of vector paths.
+        self.strokeJoin = strokeJoin  # String: A string enum with value of "MITER", "BEVEL", or "ROUND", describing how corners in vector paths are rendered.
+        self.strokeDashes = strokeDashes  # Number[]: An array of floating point numbers describing the pattern of dash length and gap lengths that the vector path follows. For example a value of [1, 2] indicates that the path has a dash of length 1 followed by a gap of length 2, repeated.
+        self.strokeAlign = strokeAlign  # String: Position of stroke relative to vector outline, as a string enum.
+        self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
         super().__init__(*args, **kwargs)
 
 
