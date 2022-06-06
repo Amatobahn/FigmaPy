@@ -2,6 +2,25 @@
 from enum import Enum
 
 
+"""
+TEAM
+└─ USER(s)
+
+PROJECT (collection of files which belong to user or team)
+└─ FILES
+    └─ VERSIONS
+    └─ COMMENTS
+    └─ DOCUMENT
+        └─  CANVAS / PAGES
+            └─  NODES
+                └─ NODES (optional children)
+                    └─  ...
+
+COMPONENTS (metadata / styles in a team library)
+
+requested data is returned as a dict / JSON
+this python wrapper is used to convert the dict to a python object, and adds meta data such as parent of node
+"""
 class File:
     # JSON file contents from a file
     def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles):
