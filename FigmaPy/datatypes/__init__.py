@@ -20,19 +20,21 @@ from .results import *
 """
     overview of datatypes:
     
-    TEAM
-    └─ USER(s)
+    organisation?
+    └─ TEAM
+        └─ USER(s)
     
     TeamProjects (python helper wrapper) 
     └─ PROJECT (collection of files which belong to user or team)
-        └─ FILES
-          └─ VERSIONS
-            └─ COMMENTS
-            └─ DOCUMENT
-                └─  CANVAS / PAGES
-                    └─  NODES
-                        └─ NODES (optional children)
-                            └─  ...
+        └─ FILE_META (meta data about file)
+            └─ FILES
+                └─ VERSIONS
+                └─ COMMENTS
+                └─ DOCUMENT
+                    └─  CANVAS / PAGES
+                        └─  NODES
+                            └─ NODES (optional children)
+                                └─  ...
     
     COMPONENTS (metadata / styles in a team library)
     

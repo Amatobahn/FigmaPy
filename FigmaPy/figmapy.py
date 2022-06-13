@@ -1,7 +1,7 @@
 import requests
 import json
-from FigmaPy.datatypes import File, Comment
-from FigmaPy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects, ProjectFiles
+from FigmaPy.datatypes import File, Comment, FileMeta, Project
+from FigmaPy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects#, ProjectFiles
 
 
 class FigmaPy:
@@ -45,12 +45,13 @@ class FigmaPy:
                 response = requests.put('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
             else:
                 response = None
+            # print(response)
             if response.status_code == 200:
                 return json.loads(response.text)
             else:
                 return None
         except (Exception, requests.HTTPError, requests.exceptions.SSLError) as e:
-            print('Error occurred attpempting to make an api request. {0}'.format(e))
+            print('Error occurred attempting to make an api request. {0}'.format(e))
             return None
 
     # -------------------------------------------------------------------------
@@ -83,7 +84,7 @@ class FigmaPy:
     # SCOPE: FILES
     # -------------------------------------------------------------------------
 
-    def get_file(self, file_key, geometry=None, version=None):
+    def get_file(self, file_key, geometry=None, version=None, parent=None):
         # https://www.figma.com/developers/api#get-files-endpoint
         """
         Get the JSON file contents for a file.
@@ -99,9 +100,10 @@ class FigmaPy:
                 optional_data += str(version)
 
         data = self.api_request('files/{0}{1}'.format(file_key, optional_data), method='get')
+        # return data
         if data is not None:
             return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
-                        data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=self)
+                        data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=parent)
 
     def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         # https://www.figma.com/developers/api#get-file-nodes-endpoint
@@ -228,13 +230,37 @@ class FigmaPy:
 
     def get_project_files(self, project_id):
         """
-        Get all files for a project
+        List the files in a given project (but don't load their content)
         """
         # https://www.figma.com/developers/api#get-project-files-endpoint
-        data = self.api_request('projects/{0}/files'.format(project_id))
-        if data is not None:
-            return ProjectFiles(data['files'])
-        # todo remove projectFiles type and use an array of File objects
-        # return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
-        #             data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=self)
+        project_data = self.api_request('projects/{0}/files'.format(project_id))
+        # return ProjectFiles(project_data['files'])
+        project = Project(name=project_data['name'], files=project_data['files'])
+        return project.files
 
+    # -------------------------------------------------------------------------
+    # SCOPE: UTIL FUNCTIONS - NOT PART OF THE API
+    # -------------------------------------------------------------------------
+
+    def get_vector_images(self, file_key, nodes, scale=1, format='svg'):  # -> dict
+        """
+        get all non rasterized images as SVG-URLs
+        figmaPy: FigmaPy.FigmaPy - the current figmaPy session
+        nodes: list of FigmaPy.models.Node - the nodes to get the images from, do not use together with the ids kwarg
+        scale: int - the scale to render the images at
+        format: str - the format to return the images in
+
+        this is the opposite of get_image_fills()
+
+        returns: dict{node_id: image_url, ...}
+        """
+        vector_ids = []
+
+        for node in nodes:
+            for paint in node.fills:
+                # anything that's not an image is assumed to be a vector
+                if paint.type != 'IMAGE':
+                    vector_ids.append(node.id)
+
+        data = self.get_file_images(file_key, ids=vector_ids, scale=scale, format=format)
+        return data.images

@@ -1,6 +1,7 @@
-# result wrappers for GET commands
 from FigmaPy.datatypes.models import Comment
 
+
+# result wrappers for GET commands
 
 class FileImages:
     # URLs for server-side rendered images from a file
@@ -48,8 +49,8 @@ class TeamProjects:
                 return project['id']
 
 
-class ProjectFiles:
-    # todo replace with array of classes type file
-    # Files from a project
-    def __init__(self, files):
-        self.files = files  # Files from a project
+# class ProjectFiles:
+#     # todo replace with array of classes type file
+#     # Files from a project
+#     def __init__(self, files):
+#         self.files = files  # Files from a project

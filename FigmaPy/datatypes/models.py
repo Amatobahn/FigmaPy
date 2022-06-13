@@ -2,21 +2,66 @@
 
 # todo make class subscribe-able. so we can do both node.items or node['items']
 # todo add property get set to attributes. so we can auto cast to correct type. accept both dict or type
-from .nodes import Document
+from . import nodes
 
 
 # -------------------------------------------------------------------------
 # GENERAL API TYPES
 # -------------------------------------------------------------------------
+class Project:
+    def __init__(self, name, files, parent=None):
+        self.name = name  # -> string - Project name
+        self.files = files  # -> array of File objects
+
+        deserialized_files = []
+        for data in files:
+            fileMeta = FileMeta(key=data['key'],
+                                last_modified=data['last_modified'],
+                                name=data['name'],
+                                thumbnail_url=data['thumbnail_url'],
+                                branches=data.get('branches', None),
+                                parent=self)
+            deserialized_files.append(fileMeta)
+        self.files = deserialized_files
+
+        # python helpers
+        self.parent = parent
+
+
+class FileMeta:
+    """
+    this lives inside a project. used to get file content => class File
+    """
+    def __init__(self, key, last_modified, name, thumbnail_url, branches=None, parent=None):
+        self.key = key  # -> string
+        self.last_modified = last_modified  # -> string
+        self.name = name  # -> string
+        self.thumbnail_url = thumbnail_url  # -> string
+        self.branches = branches  # -> array of Branch metadata
+
+        # todo deserialize branches
+
+        # python helpers
+        self.parent = parent  # the project this file belongs to
+        self.file_key = self.key  # -> string
+
+    def get_file_content(self, figmaPy, geometry=None, version=None):
+        """
+        load the file from the server
+        """
+        return figmaPy.get_file(file_key=self.key, geometry=geometry, version=version, parent=self)
+
 
 class File:
+    """
     # JSON file contents from a file
+    """
     def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles, file_key=None,
                  pythonParent=None):
         self.name = name  # File name
         self.lastModified = lastModified  # Date file was last modified
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
-        self.document = Document(**document, pythonParent=self)  # Document content from a file
+        self.document = nodes.Document(**document, pythonParent=self)  # Document content from a file
         self.components = components  # Document components from a file
         self.schemaVersion = schemaVersion  # Schema version from a file
         self.styles = styles  # Styles contained within a file
