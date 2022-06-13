@@ -1,6 +1,7 @@
 import requests
 import json
-from .models import *
+from FigmaPy.datatypes import File, Comment
+from FigmaPy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects, ProjectFiles
 
 
 class FigmaPy:
@@ -81,8 +82,9 @@ class FigmaPy:
     # -------------------------------------------------------------------------
     # SCOPE: FILES
     # -------------------------------------------------------------------------
-    # https://www.figma.com/developers/api#get-files-endpoint
+
     def get_file(self, file_key, geometry=None, version=None):
+        # https://www.figma.com/developers/api#get-files-endpoint
         """
         Get the JSON file contents for a file.
         """
@@ -101,8 +103,8 @@ class FigmaPy:
             return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
                         data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=self)
 
-    # https://www.figma.com/developers/api#get-file-nodes-endpoint
     def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
+        # https://www.figma.com/developers/api#get-file-nodes-endpoint
         """
         file_key: String, File to export JSON from
         ids: List of strings, A comma separated list of node IDs to retrieve and convert
@@ -131,8 +133,8 @@ class FigmaPy:
         # get partial JSON, only relevant data for the node. includes parent data.
         # nodes data can be accessed with data['nodes']
 
-     # https://www.figma.com/developers/api#get-images-endpoint
     def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
+        # https://www.figma.com/developers/api#get-images-endpoint
         """
         Get urls for server-side rendered images from a file.
         If the node is not an image, a rasterized version of the node will be returned.
@@ -153,8 +155,8 @@ class FigmaPy:
         if data is not None:
             return FileImages(data['images'], data['err'])
 
-    # https://www.figma.com/developers/api#get-image-fills-endpoint
     def get_image_fills(self, file_key):
+        # https://www.figma.com/developers/api#get-image-fills-endpoint
         """
         Get urls for source images from a file. a fill is a user provided image
         """
@@ -162,26 +164,38 @@ class FigmaPy:
         if data is not None:
             return data
 
-    """
-    Get the version history of a file.
-    """
+    # -------------------------------------------------------------------------
+    # SCOPE: FILES -> VERSIONS
+    # -------------------------------------------------------------------------
+
     def get_file_versions(self, file_key):
+        # https://www.figma.com/developers/api#get-file-versions-endpoint
+        """
+        Get the version history of a file.
+        """
         data = self.api_request('files/{0}/versions'.format(file_key), method='get')
         if data is not None:
+            # TODO check if data['pagination'] is still relevant, doesnt appear in docs
             return FileVersions(data['versions'], data['pagination'])
 
-    """
-    Get all comments on a file.
-    """
+    # -------------------------------------------------------------------------
+    # SCOPE: FILES -> COMMENTS
+    # -------------------------------------------------------------------------
+
     def get_comments(self, file_key):
+        # https://www.figma.com/developers/api#get-comments-endpoint
+        """
+        Get all comments on a file.
+        """
         data = self.api_request('files/{0}/comments'.format(file_key), method='get')
         if data is not None:
             return Comments(data['comments'])
 
-    """
-    Create a comment on a file.
-    """
     def post_comment(self, file_key, message, client_meta=None):
+        # https://www.figma.com/developers/api#post-comments-endpoint
+        """
+        Create a comment on a file.
+        """
         print(client_meta)
         if client_meta is not None:
             payload = '{{"message":"{0}","client_meta":{1}}}'.format(message.title(), client_meta)
@@ -192,25 +206,35 @@ class FigmaPy:
             return Comment(data['id'], data['file_key'], data['parent_id'], data['user'], data['created_at'],
                            data['resolved_at'], data['message'], data['client_meta'], data['order_id'])
 
+    def delete_comment(self):
+        # https://www.figma.com/developers/api#delete-comments-endpoint
+        raise NotImplementedError
 
     # -------------------------------------------------------------------------
-    # SCOPE: TEAMS
+    # SCOPE: TEAMS -> PROJECTS
     # -------------------------------------------------------------------------
-    """
-    Get all projects for a team
-    """
     def get_team_projects(self, team_id):
+        """
+        Get all projects for a team
+        """
+        # https://www.figma.com/developers/api#get-team-projects-endpoint
         data = self.api_request('teams/{0}/projects'.format(team_id), method='get')
         if data is not None:
             return TeamProjects(data['projects'])
 
     # -------------------------------------------------------------------------
-    # SCOPE: PROJECTS
+    # SCOPE: PROJECTS -> FILES
     # -------------------------------------------------------------------------
-    """
-    Get all files for a project
-    """
+
     def get_project_files(self, project_id):
+        """
+        Get all files for a project
+        """
+        # https://www.figma.com/developers/api#get-project-files-endpoint
         data = self.api_request('projects/{0}/files'.format(project_id))
         if data is not None:
             return ProjectFiles(data['files'])
+        # todo remove projectFiles type and use an array of File objects
+        # return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
+        #             data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=self)
+
