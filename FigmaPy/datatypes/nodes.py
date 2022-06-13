@@ -156,6 +156,8 @@ class Frame(Node):
                  effects=None,
                  isMask=None,
                  layoutMode=None,
+                 layoutGrow=None,
+                 styles=None,
                  *args, **kwargs):
         self.children = children  # An array of nodes that are direct children of this node
         self.locked = locked  # If true, layer is locked and cannot be edited
@@ -196,6 +198,8 @@ class Frame(Node):
         self.overflowDirection = overflowDirection
         self.effects = effects  # An array of effects attached to this node
         self.isMask = isMask  # Does this node mask sibling nodes in front of it?
+        self.layoutGrow = layoutGrow,
+        self.styles = styles,
         super().__init__(*args, **kwargs)
 
 
@@ -219,6 +223,8 @@ class Vector(Node):
                  strokeMiterAngle=None,
                  strokeCap=None,
                  styles=None,
+                 cornerRadius=None,
+                 rectangleCornerRadii=None,
                  *args, **kwargs):
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.exportSettings = exportSettings  # An array of export settings representing images to export from node
@@ -247,6 +253,8 @@ class Vector(Node):
         self.strokeGeometry = strokeGeometry  # An array of paths representing the object stroke
         self.strokeAlign = strokeAlign  # Where stroke is drawn relative to vector outline as a string enum
         self.styles = styles
+        self.cornerRadius = cornerRadius
+        self.rectangleCornerRadii = rectangleCornerRadii
         super().__init__(*args, **kwargs)
 
 

@@ -94,7 +94,7 @@ class LayoutGrid:
 
 class Effect:
     # A visual effect such as a shadow or blur
-    def __init__(self, type, visible, radius, color, blendMode, offset, showShadowBehindNode, spread=0):
+    def __init__(self, type, visible, radius, color=None, blendMode=None, offset=None, showShadowBehindNode=None, spread=0):
         self.type = type  # Type of effect as a string enum
         self.visible = visible  # is the effect active?
         self.radius = radius  # Radius of the blur effect (applies to shadows as well)
