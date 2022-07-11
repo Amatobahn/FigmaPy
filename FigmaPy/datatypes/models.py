@@ -2,7 +2,6 @@
 
 # todo make class subscribe-able. so we can do both node.items or node['items']
 # todo add property get set to attributes. so we can auto cast to correct type. accept both dict or type
-import warnings
 
 from . import nodes
 
@@ -39,9 +38,7 @@ class FileMeta:
         self.last_modified = last_modified  # -> string
         self.name = name  # -> string
         self.thumbnail_url = thumbnail_url  # -> string
-        self.branches = branches  # -> array of Branch metadata
-
-        # todo deserialize branches
+        self.branches = branches  # -> array of Branch metadata # todo deserialize branches
 
         # python helpers
         self._parent = _parent  # the project this file belongs to
@@ -74,14 +71,10 @@ class File:
         self.styles = styles  # Styles contained within a file
         self.mainFileKey = mainFileKey
         self.branches = branches
-
         self.linkAccess = linkAccess  # TODO check if this only appears in branch files
 
         # python helpers
         self._parent = _parent  # using underscore to mark var as python helper, instead of a figma api var
-
-        if args or kwargs:
-            warnings.warn(f"File does not support (kw)args: {args} {kwargs}", Warning)
 
 
 class Comment:
