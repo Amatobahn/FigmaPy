@@ -112,12 +112,11 @@ class FigmaPy:
         if return_raw_data:
             return data
 
-
         if data is not None:
 
             # insert python helper attributes
             data['file_key'] = key
-            data['pythonParent'] = parent
+            data['_parent'] = parent
 
             return File(**data)
 

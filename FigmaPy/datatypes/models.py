@@ -57,7 +57,7 @@ class File:
     # JSON file contents from a file
     """
     def __init__(self, name, document, components, componentSets, lastModified, thumbnailUrl, styles, schemaVersion=0,
-                 file_key=None, pythonParent=None, version=None, role=None, editorType=None, linkAccess=None,
+                 file_key=None, _parent=None, version=None, role=None, editorType=None, linkAccess=None,
                  mainFileKey=None, branches=None):
         self.name = name  # File name
         self.role = role
@@ -65,7 +65,7 @@ class File:
         self.editorType = editorType
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
         self.version = version
-        self.document = nodes.Document(**document, pythonParent=self)  # Document content from a file
+        self.document = nodes.Document(**document, _parent=self)  # Document content from a file
         self.components = components  # Document components from a file
         self.componentSets = componentSets
         self.schemaVersion = schemaVersion  # Schema version from a file
@@ -77,7 +77,7 @@ class File:
 
         # python helpers
         self.file_key = file_key  # TODO remove since we now have mainFileKey
-        self.pythonParent = pythonParent
+        self._parent = _parent  # using underscore to mark var as python helper, instead of a figma api var
 
     def get_file_key(self):  # TODO remove this and use mainFileKey
         return self.file_key

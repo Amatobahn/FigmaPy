@@ -11,7 +11,7 @@ from .properties import deserialize_properties
 
 
 class Node:
-    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, pythonParent=None, *args,
+    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, _parent=None, *args,
                  **kwargs):
         # figma data
         self.id = id  # A string uniquely identifying this node within the document.
@@ -22,7 +22,7 @@ class Node:
         self.sharedPluginData = sharedPluginData  # Data written by plugins that is visible to all plugins. Requires the `pluginData` parameter to include the string "shared
 
         # python helpers
-        self.pythonParent = pythonParent  # The python parent of this node. which holds this node.
+        self._parent = _parent  # The python parent of this node. which holds this node.
         self.deserialize_properties()
 
         if args or kwargs:
@@ -54,7 +54,7 @@ class Node:
         # print('type:', node_type)
         # print('name:', node_dict.get('name'))
         # pprint.pprint(node_dict)
-        node = node_type.value(**node_dict, pythonParent=self)
+        node = node_type.value(**node_dict, _parent=self)
         return node
 
     def get_children_recursively(self):
