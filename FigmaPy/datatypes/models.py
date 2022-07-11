@@ -56,21 +56,30 @@ class File:
     """
     # JSON file contents from a file
     """
-    def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles, file_key=None,
-                 pythonParent=None):
+    def __init__(self, name, document, components, componentSets, lastModified, thumbnailUrl, styles, schemaVersion=0,
+                 file_key=None, pythonParent=None, version=None, role=None, editorType=None, linkAccess=None,
+                 mainFileKey=None, branches=None):
         self.name = name  # File name
+        self.role = role
         self.lastModified = lastModified  # Date file was last modified
+        self.editorType = editorType
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
+        self.version = version
         self.document = nodes.Document(**document, pythonParent=self)  # Document content from a file
         self.components = components  # Document components from a file
+        self.componentSets = componentSets
         self.schemaVersion = schemaVersion  # Schema version from a file
         self.styles = styles  # Styles contained within a file
+        self.mainFileKey = mainFileKey
+        self.branches = branches
+
+        self.linkAccess = linkAccess  # TODO check if this only appears in branch files
 
         # python helpers
-        self.file_key = file_key
+        self.file_key = file_key  # TODO remove since we now have mainFileKey
         self.pythonParent = pythonParent
 
-    def get_file_key(self):
+    def get_file_key(self):  # TODO remove this and use mainFileKey
         return self.file_key
 
 
