@@ -153,15 +153,20 @@ class Paint:
         if self.imageRef is None:
             return
 
-        # TODO get attr from parent
+        file_images = self.root_parent.get_file_images(file_key=self.get_file_key(),
+                                                       ids=[self._parent.id],
+                                                       format='svg')
+        # get file images is a figmapy session method. the root parent is the figmapy session
+        # seems there might be a better way for this, instead of relying on root parent
+
+        return file_images.images[self._parent.id]
+
+    @property
+    def root_parent(self):
         root_parent = self._parent  # get FigmaPy instance
         while hasattr(root_parent, '_parent'):
             root_parent = root_parent._parent
-
-        file_images = root_parent.get_file_images(file_key=self.get_file_key(),
-                                                  ids=[self._parent.id],
-                                                  format='svg')  # -> FileImage
-        return file_images.images[self._parent.id]
+        return root_parent
 
     # todo property get setter
     def get_file_key(self):
