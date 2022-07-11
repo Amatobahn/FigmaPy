@@ -2,6 +2,8 @@
 
 # todo make class subscribe-able. so we can do both node.items or node['items']
 # todo add property get set to attributes. so we can auto cast to correct type. accept both dict or type
+import warnings
+
 from . import nodes
 
 
@@ -43,7 +45,7 @@ class FileMeta:
 
         # python helpers
         self.parent = parent  # the project this file belongs to
-        self.file_key = self.key  # -> string
+        self._file_key = self.key  # -> string
 
     def get_file_content(self, figmaPy, geometry=None, version=None):
         """
@@ -57,8 +59,8 @@ class File:
     # JSON file contents from a file
     """
     def __init__(self, name, document, components, componentSets, lastModified, thumbnailUrl, styles, schemaVersion=0,
-                 file_key=None, _parent=None, version=None, role=None, editorType=None, linkAccess=None,
-                 mainFileKey=None, branches=None):
+                version=None, role=None, editorType=None, linkAccess=None, mainFileKey=None, branches=None,
+                 _parent=None, *args, **kwargs):
         self.name = name  # File name
         self.role = role
         self.lastModified = lastModified  # Date file was last modified
@@ -76,11 +78,10 @@ class File:
         self.linkAccess = linkAccess  # TODO check if this only appears in branch files
 
         # python helpers
-        self.file_key = file_key  # TODO remove since we now have mainFileKey
         self._parent = _parent  # using underscore to mark var as python helper, instead of a figma api var
 
-    def get_file_key(self):  # TODO remove this and use mainFileKey
-        return self.file_key
+        if args or kwargs:
+            warnings.warn(f"File does not support (kw)args: {args} {kwargs}", Warning)
 
 
 class Comment:

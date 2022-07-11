@@ -115,7 +115,7 @@ class FigmaPy:
         if data is not None:
 
             # insert python helper attributes
-            data['file_key'] = key
+            data['mainFileKey'] = key
             data['_parent'] = parent
 
             return File(**data)
