@@ -85,7 +85,7 @@ class FigmaPy:
     # -------------------------------------------------------------------------
 
     def get_file(self, key, version=None, geometry=None, plugin_data=None,
-                 parent=None, return_raw_data=False):
+                 parent=None, return_raw_data=False) -> File or dict:
         # https://www.figma.com/developers/api#get-files-endpoint
         """
         Get the JSON file contents for a file.
@@ -230,7 +230,7 @@ class FigmaPy:
     # -------------------------------------------------------------------------
     # SCOPE: TEAMS -> PROJECTS
     # -------------------------------------------------------------------------
-    def get_team_projects(self, team_id):
+    def get_team_projects(self, team_id) -> TeamProjects:
         """
         Get all projects for a team
         """
@@ -257,7 +257,7 @@ class FigmaPy:
     # SCOPE: UTIL FUNCTIONS - NOT PART OF THE API
     # -------------------------------------------------------------------------
 
-    def get_vector_images(self, file_key, nodes, scale=1, format='svg'):  # -> dict
+    def get_vector_images(self, file_key, nodes, scale=1, format='svg') -> dict:
         """
         get all non rasterized images as SVG-URLs
         figmaPy: FigmaPy.FigmaPy - the current figmaPy session

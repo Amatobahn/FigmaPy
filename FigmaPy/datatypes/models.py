@@ -2,6 +2,7 @@
 
 # todo make class subscribe-able. so we can do both node.items or node['items']
 # todo add property get set to attributes. so we can auto cast to correct type. accept both dict or type
+from typing import List
 
 from . import nodes
 
@@ -10,9 +11,9 @@ from . import nodes
 # GENERAL API TYPES
 # -------------------------------------------------------------------------
 class Project:
-        self.name = name  # -> string - Project name
-        self.files = files  # -> array of File objects
     def __init__(self, name, files, _parent=None):
+        self.name = name  # -> string - Project name
+        self.files = self.deserialize_files(files, _parent=self)
 
         # python helpers
         self._parent = _parent
@@ -36,15 +37,15 @@ class FileMeta:
     this lives inside a project. used to get file content => class File
     """
     def __init__(self, key, last_modified, name, thumbnail_url, branches=None, _parent=None):
-        self.key = key  # -> string
-        self.last_modified = last_modified  # -> string
-        self.name = name  # -> string
-        self.thumbnail_url = thumbnail_url  # -> string
+        self.key: str = key
+        self.last_modified: str = last_modified
+        self.name: str = name
+        self.thumbnail_url: str = thumbnail_url
         self.branches = branches  # -> array of Branch metadata # todo deserialize branches
 
         # python helpers
         self._parent = _parent  # the project this file belongs to
-        self._file_key = self.key  # -> string
+        self._file_key: str = self.key
 
     def get_file_content(self, figmaPy, geometry=None, version=None):
         """
