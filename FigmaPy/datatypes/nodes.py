@@ -58,6 +58,7 @@ class Node:
         return node
 
     def get_children_recursively(self):
+        # TODO make it clear this wont work unless the node has children, due to inherit from node
         """
         get all children of this node, recursively.
         """
@@ -71,9 +72,8 @@ class Node:
     def get_file_image_url(self):
         """
         get the image source url from the fill (paint) of this node.
+        use this when you want 1 images, otherwise it's faster to batch your requests
         """
-        # todo use export settings if found? they seem to be ignored by the figma API
-        # if self.type == 'IMAGE':
         paint = self.fills[0]  # -> Paint
         return paint.get_file_image_url()
 
@@ -326,12 +326,35 @@ class Slice(Node):
 
 
 class Component(Frame):
+    # todo this maybe shouldnt inherit from frame
+    # note there are 2 types of componentsets. the one under "property type", and the one under "component and styles"
+    # https://www.figma.com/developers/api#library-items
+
+    # there is COMPONENT node type, see frame
+    # https://www.figma.com/developers/api#node-types
+    # this is a component node instance in figma, with position scale etc
+
+    # there is Component property type
+    # see https://www.figma.com/developers/api#files-types
+    # A description of a main component. Helps you identify which component instances are attached to
+    # this is what file get returns
+        # from look ing at the attributes it looks liek a meta file
+        # keyString
+        # nameString
+        # descriptionString
+        # componentSetId?String
+        # documentationLinks
+
     # A node that can have instances created of it that share the same properties
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
 class ComponentSet(Frame):
+    # todo this maybe shouldnt inherit from frame
+    # note there are 2 types of componentsets. the one under "property type", and the one under "component and styles"
+    # https://www.figma.com/developers/api#library-items
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

@@ -35,6 +35,8 @@ from .results import *
                         └─  NODES
                             └─ NODES (optional children)
                                 └─  ...
+                └─ Components - variants, linked to a component set
+                └─ ComponentSets - collection of variants
     
     COMPONENTS (metadata / styles in a team library)
     
