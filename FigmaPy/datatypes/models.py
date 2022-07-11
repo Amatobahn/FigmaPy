@@ -14,19 +14,21 @@ class Project:
         self.files = files  # -> array of File objects
     def __init__(self, name, files, _parent=None):
 
-        deserialized_files = []
+        # python helpers
+        self._parent = _parent
+
+    @staticmethod
+    def deserialize_files(files, _parent=None):
+        deserialized_files: List[FileMeta] = []
         for data in files:
             fileMeta = FileMeta(key=data['key'],
                                 last_modified=data['last_modified'],
                                 name=data['name'],
                                 thumbnail_url=data['thumbnail_url'],
                                 branches=data.get('branches', None),
-                                _parent=self)
+                                _parent=_parent)
             deserialized_files.append(fileMeta)
-        self.files = deserialized_files
-
-        # python helpers
-        self._parent = _parent
+        return deserialized_files
 
 
 class FileMeta:
