@@ -1,4 +1,8 @@
 def get_file_key(node):
+    # comments use file_key
+    # files us mainFileKey
+    # get file key / fileMeta use key
+
     if hasattr(node, 'file_key'):
         return node.file_key
     if hasattr(node, '_file_key'):

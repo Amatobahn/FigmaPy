@@ -51,9 +51,6 @@ class Node:
         if node_dict is None:
             return
         node_type = NodeTypes[node_dict.get('type')]
-        # print('type:', node_type)
-        # print('name:', node_dict.get('name'))
-        # pprint.pprint(node_dict)
         node = node_type.value(**node_dict, _parent=self)
         return node
 
