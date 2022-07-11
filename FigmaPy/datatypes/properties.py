@@ -252,7 +252,7 @@ def deserialize_properties(self):
         self.children = [self.deserialize(child) for child in self.children]
         if self:
             for child in self.children:
-                child.parent = self
+                child._parent = self
     if hasattr(self, 'fillGeometry') and isinstance(self.fillGeometry, list) and self.fillGeometry is not None:
         self.fillGeometry = [Path(**path) for path in self.fillGeometry]
     if hasattr(self, 'strokeGeometry') and isinstance(self.strokeGeometry, list) and self.strokeGeometry is not None:

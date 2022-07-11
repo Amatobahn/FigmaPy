@@ -11,9 +11,9 @@ from . import nodes
 # GENERAL API TYPES
 # -------------------------------------------------------------------------
 class Project:
-    def __init__(self, name, files, parent=None):
         self.name = name  # -> string - Project name
         self.files = files  # -> array of File objects
+    def __init__(self, name, files, _parent=None):
 
         deserialized_files = []
         for data in files:
@@ -22,19 +22,19 @@ class Project:
                                 name=data['name'],
                                 thumbnail_url=data['thumbnail_url'],
                                 branches=data.get('branches', None),
-                                parent=self)
+                                _parent=self)
             deserialized_files.append(fileMeta)
         self.files = deserialized_files
 
         # python helpers
-        self.parent = parent
+        self._parent = _parent
 
 
 class FileMeta:
     """
     this lives inside a project. used to get file content => class File
     """
-    def __init__(self, key, last_modified, name, thumbnail_url, branches=None, parent=None):
+    def __init__(self, key, last_modified, name, thumbnail_url, branches=None, _parent=None):
         self.key = key  # -> string
         self.last_modified = last_modified  # -> string
         self.name = name  # -> string
@@ -44,7 +44,7 @@ class FileMeta:
         # todo deserialize branches
 
         # python helpers
-        self.parent = parent  # the project this file belongs to
+        self._parent = _parent  # the project this file belongs to
         self._file_key = self.key  # -> string
 
     def get_file_content(self, figmaPy, geometry=None, version=None):
@@ -60,7 +60,7 @@ class File:
     """
     def __init__(self, name, document, components, componentSets, lastModified, thumbnailUrl, styles, schemaVersion=0,
                 version=None, role=None, editorType=None, linkAccess=None, mainFileKey=None, branches=None,
-                 _parent=None, *args, **kwargs):
+                 _parent=None):
         self.name = name  # File name
         self.role = role
         self.lastModified = lastModified  # Date file was last modified
