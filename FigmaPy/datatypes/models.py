@@ -49,7 +49,7 @@ class FileMeta:
         """
         load the file from the server
         """
-        return figmaPy.get_file(file_key=self.key, geometry=geometry, version=version, parent=self)
+        return figmaPy.get_file(key=self.key, geometry=geometry, version=version, parent=self)
 
 
 class File:
