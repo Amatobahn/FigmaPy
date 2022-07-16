@@ -45,10 +45,10 @@ class FigmaPy:
                 response = requests.put('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
             else:
                 response = None
-            # print(response)
             if response.status_code == 200:
                 return json.loads(response.text)
             else:
+                print(response.text)
                 return None
         except (Exception, requests.HTTPError, requests.exceptions.SSLError) as e:
             print('Error occurred attempting to make an api request. {0}'.format(e))
@@ -84,26 +84,41 @@ class FigmaPy:
     # SCOPE: FILES
     # -------------------------------------------------------------------------
 
-    def get_file(self, file_key, geometry=None, version=None, parent=None):
+    def get_file(self, key, version=None, geometry=None, plugin_data=None,
+                 parent=None, return_raw_data=False) -> File or dict:
         # https://www.figma.com/developers/api#get-files-endpoint
         """
         Get the JSON file contents for a file.
         """
         optional_data = ''
-        if geometry is not None or version is not None:
+        if geometry or version or parent or plugin_data:
             optional_data = '?'
-            if geometry is not None:
-                optional_data += str(geometry)
-                if version is not None:
-                    optional_data += '&{0}'.format(str(version))
-            elif version is not None:
-                optional_data += str(version)
+            if geometry:
+                optional_data += f'geometry={geometry}'
 
-        data = self.api_request('files/{0}{1}'.format(file_key, optional_data), method='get')
-        # return data
+            if optional_data != '?':
+                optional_data += '&'
+            if version:
+                optional_data += f'version={version}'
+
+            if optional_data != '?':
+                optional_data += '&'
+            if plugin_data:
+                optional_data += f'plugin_data={plugin_data}'
+
+        request = 'files/{0}{1}'.format(key, optional_data)
+
+        data = self.api_request(request, method='get')
+        if return_raw_data:
+            return data
+
         if data is not None:
-            return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
-                        data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=parent)
+
+            # insert python helper attributes
+            data['mainFileKey'] = key
+            data['_parent'] = parent
+
+            return File(**data)
 
     def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         # https://www.figma.com/developers/api#get-file-nodes-endpoint
@@ -215,7 +230,7 @@ class FigmaPy:
     # -------------------------------------------------------------------------
     # SCOPE: TEAMS -> PROJECTS
     # -------------------------------------------------------------------------
-    def get_team_projects(self, team_id):
+    def get_team_projects(self, team_id) -> TeamProjects:
         """
         Get all projects for a team
         """
@@ -242,7 +257,7 @@ class FigmaPy:
     # SCOPE: UTIL FUNCTIONS - NOT PART OF THE API
     # -------------------------------------------------------------------------
 
-    def get_vector_images(self, file_key, nodes, scale=1, format='svg'):  # -> dict
+    def get_vector_images(self, file_key, nodes, scale=1, format='svg') -> dict:
         """
         get all non rasterized images as SVG-URLs
         figmaPy: FigmaPy.FigmaPy - the current figmaPy session

@@ -2,6 +2,8 @@
 
 # todo make class subscribe-able. so we can do both node.items or node['items']
 # todo add property get set to attributes. so we can auto cast to correct type. accept both dict or type
+from typing import List
+
 from . import nodes
 
 
@@ -9,69 +11,73 @@ from . import nodes
 # GENERAL API TYPES
 # -------------------------------------------------------------------------
 class Project:
-    def __init__(self, name, files, parent=None):
+    def __init__(self, name, files, _parent=None):
         self.name = name  # -> string - Project name
-        self.files = files  # -> array of File objects
+        self.files = self.deserialize_files(files, _parent=self)
 
-        deserialized_files = []
+        # python helpers
+        self._parent = _parent
+
+    @staticmethod
+    def deserialize_files(files, _parent=None):
+        deserialized_files: List[FileMeta] = []
         for data in files:
             fileMeta = FileMeta(key=data['key'],
                                 last_modified=data['last_modified'],
                                 name=data['name'],
                                 thumbnail_url=data['thumbnail_url'],
                                 branches=data.get('branches', None),
-                                parent=self)
+                                _parent=_parent)
             deserialized_files.append(fileMeta)
-        self.files = deserialized_files
-
-        # python helpers
-        self.parent = parent
+        return deserialized_files
 
 
 class FileMeta:
     """
     this lives inside a project. used to get file content => class File
     """
-    def __init__(self, key, last_modified, name, thumbnail_url, branches=None, parent=None):
-        self.key = key  # -> string
-        self.last_modified = last_modified  # -> string
-        self.name = name  # -> string
-        self.thumbnail_url = thumbnail_url  # -> string
-        self.branches = branches  # -> array of Branch metadata
-
-        # todo deserialize branches
+    def __init__(self, key, last_modified, name, thumbnail_url, branches=None, _parent=None):
+        self.key: str = key
+        self.last_modified: str = last_modified
+        self.name: str = name
+        self.thumbnail_url: str = thumbnail_url
+        self.branches = branches  # -> array of Branch metadata # todo deserialize branches
 
         # python helpers
-        self.parent = parent  # the project this file belongs to
-        self.file_key = self.key  # -> string
+        self._parent = _parent  # the project this file belongs to
+        self._file_key: str = self.key
 
     def get_file_content(self, figmaPy, geometry=None, version=None):
         """
         load the file from the server
         """
-        return figmaPy.get_file(file_key=self.key, geometry=geometry, version=version, parent=self)
+        return figmaPy.get_file(key=self.key, geometry=geometry, version=version, parent=self)
 
 
 class File:
     """
     # JSON file contents from a file
     """
-    def __init__(self, name, document, components, lastModified, thumbnailUrl, schemaVersion, styles, file_key=None,
-                 pythonParent=None):
+    def __init__(self, name, document, components, componentSets, lastModified, thumbnailUrl, styles, schemaVersion=0,
+                version=None, role=None, editorType=None, linkAccess=None, mainFileKey=None, branches=None,
+                 _parent=None):
         self.name = name  # File name
+        self.role = role
         self.lastModified = lastModified  # Date file was last modified
+        self.editorType = editorType
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
-        self.document = nodes.Document(**document, pythonParent=self)  # Document content from a file
+        self.version = version
+        self.document = nodes.Document(**document, _parent=self)  # Document content from a file
         self.components = components  # Document components from a file
+        self.componentSets = componentSets
         self.schemaVersion = schemaVersion  # Schema version from a file
         self.styles = styles  # Styles contained within a file
+        self.mainFileKey = mainFileKey
+        self.branches = branches
+        self.linkAccess = linkAccess  # TODO check if this only appears in branch files
 
         # python helpers
-        self.file_key = file_key
-        self.pythonParent = pythonParent
-
-    def get_file_key(self):
-        return self.file_key
+        self._parent = _parent  # using underscore to mark var as python helper, instead of a figma api var
 
 
 class Comment:
