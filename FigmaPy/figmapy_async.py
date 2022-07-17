@@ -219,8 +219,3 @@ class AioHttpFigmaPy(FigmaPyBase):
         data = await self.async_api_request(api_url, method='get')
         if data is not None:
             return FileImages(data['images'], data['err'])
-
-
-# token = "figd_I1opK38V1XXicDvfkPVExqXBdYqsmfHcjnM_mWmB"
-# file = "qKn0Q9h6O5N7vai2nMgW4J"
-# f = FigmaPy.FigmaPy(token=token) 
