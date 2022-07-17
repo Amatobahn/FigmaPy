@@ -35,4 +35,7 @@ setup(
     # Required dependencies. Will be installed by pip
     # when the project is installed.
     install_requires=['requests'],
+    extra_requires = {
+        "async": ["aiohttp"]
+    }
 )
