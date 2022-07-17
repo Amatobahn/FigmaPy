@@ -123,7 +123,7 @@ class Paint:
                  gifRef=None,
                  visible=True,
                  opacity=1,
-                 pythonParent=None):
+                 _parent=None):
         self.type = type  # Type of paint as a string enum
         self.visible = visible  # Is the paint enabled?
         self.opacity = opacity  # Overall opacity of paint (colors within the paint can also have opacity values)
@@ -146,22 +146,27 @@ class Paint:
         self.gifRef = gifRef
 
         # todo move to decorator
-        self.pythonParent = pythonParent
+        self._parent = _parent
 
     def get_file_image_url(self):
         """get url of image"""
         if self.imageRef is None:
             return
 
-        # TODO get attr from parent
-        root_parent = self.pythonParent  # get FigmaPy instance
-        while hasattr(root_parent, 'pythonParent'):
-            root_parent = root_parent.pythonParent
+        file_images = self.root_parent.get_file_images(file_key=self.get_file_key(),
+                                                       ids=[self._parent.id],
+                                                       format='svg')
+        # get file images is a figmapy session method. the root parent is the figmapy session
+        # seems there might be a better way for this, instead of relying on root parent
 
-        file_images = root_parent.get_file_images(file_key=self.get_file_key(),
-                                                  ids=[self.pythonParent.id],
-                                                  format='svg')  # -> FileImage
-        return file_images.images[self.pythonParent.id]
+        return file_images.images[self._parent.id]
+
+    @property
+    def root_parent(self):
+        root_parent = self._parent  # get FigmaPy instance
+        while hasattr(root_parent, '_parent'):
+            root_parent = root_parent._parent
+        return root_parent
 
     # todo property get setter
     def get_file_key(self):
@@ -252,7 +257,7 @@ def deserialize_properties(self):
         self.children = [self.deserialize(child) for child in self.children]
         if self:
             for child in self.children:
-                child.parent = self
+                child._parent = self
     if hasattr(self, 'fillGeometry') and isinstance(self.fillGeometry, list) and self.fillGeometry is not None:
         self.fillGeometry = [Path(**path) for path in self.fillGeometry]
     if hasattr(self, 'strokeGeometry') and isinstance(self.strokeGeometry, list) and self.strokeGeometry is not None:
@@ -260,8 +265,8 @@ def deserialize_properties(self):
     if hasattr(self, 'exportSettings') and isinstance(self.exportSettings, list) and self.exportSettings is not None:
         self.exportSettings = [ExportSetting(**setting) for setting in self.exportSettings]
     if hasattr(self, 'fills') and isinstance(self.fills, list) and self.fills is not None:
-        self.fills = [Paint(**paint, pythonParent=self) for paint in self.fills]
+        self.fills = [Paint(**paint, _parent=self) for paint in self.fills]
     if hasattr(self, 'strokes') and isinstance(self.strokes, list) and self.strokes is not None:
-        self.strokes = [Paint(**paint, pythonParent=self) for paint in self.strokes]
+        self.strokes = [Paint(**paint, _parent=self) for paint in self.strokes]
     if hasattr(self, 'effects') and isinstance(self.effects, list) and self.effects is not None:
         self.effects = [Effect(**effect) for effect in self.effects]

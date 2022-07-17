@@ -15,7 +15,7 @@ import pprint
 token = 'REPLACE_WITH_YOUR_TOKEN'  # can be found in your figma user profile page
 file_key = 'REPLACE_WITH_YOUR_FILE_KEY'  # can be found in the URL of the file
 figmaPy = FigmaPy.FigmaPy(token=token)
-file = figmaPy.get_file(file_key=file_key)
+file = figmaPy.get_file(key=file_key)
 
 print([x.name for x in file.document.children])
 # ['Page 1', 'Page 2']
