@@ -16,6 +16,7 @@ class FigmaPy(FigmaPyBase):
     '''
     Request Figma API
     '''
+    # TODO split sync and async methods
     def api_request(self, endpoint, method='get', payload=None):
         method = method.lower()
 
@@ -59,6 +60,7 @@ class FigmaPy(FigmaPyBase):
     """
     Create token from client_id, client_secret, code
     """
+    # TODO split sync and async methods
     def create_token(self, client_id, client_secret, redirect_uri, code):
         payload = {
             'client_id': '{0}'.format(client_id),
@@ -109,6 +111,7 @@ class FigmaPy(FigmaPyBase):
         depth: Number, Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes
         geometry: String, Set to "paths" to export vector data
         plugin_data: String, A comma separated list of plugin IDs and/or the string "shared". Any data present in the document written by those plugins will be included in the result in the `pluginData` and `sharedPluginData` properties.
+
         return a partial JSON, only relevant data for the node. includes parent data.
         nodes data can be accessed with data['nodes']
         """
@@ -127,6 +130,7 @@ class FigmaPy(FigmaPyBase):
         if data is not None:
             return FileImages(data['images'], data['err'])
 
+    # TODO split sync and async methods
     def get_image_fills(self, file_key):
         # https://www.figma.com/developers/api#get-image-fills-endpoint
         """
@@ -140,6 +144,7 @@ class FigmaPy(FigmaPyBase):
     # SCOPE: FILES -> VERSIONS
     # -------------------------------------------------------------------------
 
+    # TODO split sync and async methods
     def get_file_versions(self, file_key):
         # https://www.figma.com/developers/api#get-file-versions-endpoint
         """
@@ -154,6 +159,7 @@ class FigmaPy(FigmaPyBase):
     # SCOPE: FILES -> COMMENTS
     # -------------------------------------------------------------------------
 
+    # TODO split sync and async methods
     def get_comments(self, file_key):
         # https://www.figma.com/developers/api#get-comments-endpoint
         """
@@ -163,6 +169,7 @@ class FigmaPy(FigmaPyBase):
         if data is not None:
             return Comments(data['comments'])
 
+    # TODO split sync and async methods
     def post_comment(self, file_key, message, client_meta=None):
         # https://www.figma.com/developers/api#post-comments-endpoint
         """
@@ -178,6 +185,7 @@ class FigmaPy(FigmaPyBase):
             return Comment(data['id'], data['file_key'], data['parent_id'], data['user'], data['created_at'],
                            data['resolved_at'], data['message'], data['client_meta'], data['order_id'])
 
+    # TODO split sync and async methods
     def delete_comment(self):
         # https://www.figma.com/developers/api#delete-comments-endpoint
         raise NotImplementedError
@@ -185,6 +193,7 @@ class FigmaPy(FigmaPyBase):
     # -------------------------------------------------------------------------
     # SCOPE: TEAMS -> PROJECTS
     # -------------------------------------------------------------------------
+    # TODO split sync and async methods
     def get_team_projects(self, team_id) -> TeamProjects:
         """
         Get all projects for a team
@@ -198,6 +207,7 @@ class FigmaPy(FigmaPyBase):
     # SCOPE: PROJECTS -> FILES
     # -------------------------------------------------------------------------
 
+    # TODO split sync and async methods
     def get_project_files(self, project_id):
         """
         List the files in a given project (but don't load their content)
@@ -212,6 +222,7 @@ class FigmaPy(FigmaPyBase):
     # SCOPE: UTIL FUNCTIONS - NOT PART OF THE API
     # -------------------------------------------------------------------------
 
+    # TODO split sync and async methods
     def get_vector_images(self, file_key, nodes, scale=1, format='svg') -> dict:
         """
         get all non rasterized images as SVG-URLs
