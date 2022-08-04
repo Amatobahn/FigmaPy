@@ -122,19 +122,8 @@ class FigmaPy(FigmaPyBase):
         Get urls for server-side rendered images from a file.
         If the node is not an image, a rasterized version of the node will be returned.
         """
-        optional_data = ''
-        if scale is not None or format is not None or version is not None:
-            if scale is not None:
-                optional_data += '&scale={0}'.format(str(scale))
-            if format is not None:
-                optional_data += '&format={0}'.format(str(format))
-            if version is not None:
-                optional_data += '&version={0}'.format(str(version))
-        id_array = []
-        for id in ids:
-            id_array.append(id)
-        id_list = ','.join(id_array)
-        data = self.api_request('images/{0}?ids={1}{2}'.format(file_key, id_list, optional_data), method='get')
+        api_url = self._build_get_file_images_url(file_key, ids, scale=None, format=None, version=None)
+        data = self.api_request(api_url, method='get')
         if data is not None:
             return FileImages(data['images'], data['err'])
 
