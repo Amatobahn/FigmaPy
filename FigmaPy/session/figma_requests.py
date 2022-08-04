@@ -2,7 +2,8 @@ import requests
 import json
 from FigmaPy.datatypes import File, Comment, FileMeta, Project
 from FigmaPy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects#, ProjectFiles
-from .url_builder import FigmaPyBase
+from . import url_builder
+from .base import FigmaPyBase
 
 
 class FigmaPy(FigmaPyBase):
@@ -91,7 +92,7 @@ class FigmaPy(FigmaPyBase):
         """
         Get the JSON file contents for a file.
         """
-        api_url = self._build_get_file_url(key, geometry, version, plugin_data)
+        api_url = url_builder.get_file(key, geometry, version, plugin_data)
         data = self.api_request(api_url, method='get')
         if return_raw_data:
             return data
@@ -115,7 +116,7 @@ class FigmaPy(FigmaPyBase):
         return a partial JSON, only relevant data for the node. includes parent data.
         nodes data can be accessed with data['nodes']
         """
-        api_url = self._build_get_file_nodes_url(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
+        api_url = url_builder.get_file_nodes(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
         data = self.api_request(api_url, method='get')
         return data
 
@@ -125,7 +126,7 @@ class FigmaPy(FigmaPyBase):
         Get urls for server-side rendered images from a file.
         If the node is not an image, a rasterized version of the node will be returned.
         """
-        api_url = self._build_get_file_images_url(file_key, ids, scale=None, format=None, version=None)
+        api_url = url_builder.get_file_images(file_key, ids, scale=None, format=None, version=None)
         data = self.api_request(api_url, method='get')
         if data is not None:
             return FileImages(data['images'], data['err'])

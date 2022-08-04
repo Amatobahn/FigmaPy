@@ -11,7 +11,8 @@ from FigmaPy.datatypes.results import (
     Comments,
     TeamProjects,
 ) 
-from .url_builder import FigmaPyBase
+from . import url_builder
+from .base import FigmaPyBase
 
 
 class AioHttpFigmaPy(FigmaPyBase):
@@ -59,7 +60,7 @@ class AioHttpFigmaPy(FigmaPyBase):
     async def get_file(self, key, geometry=None, version=None, parent=None):
         # https://www.figma.com/developers/api#get-files-endpoint
         
-        api_url = self._build_get_file_url(key, geometry, version, parent)
+        api_url = url_builder.get_file(key, geometry, version, parent)
         data = await self.async_api_request(api_url, method='get')
         if data is not None:
             # insert python helper attributes
@@ -70,14 +71,14 @@ class AioHttpFigmaPy(FigmaPyBase):
     async def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         # https://www.figma.com/developers/api#get-file-nodes-endpoint
     
-        api_url = self._build_get_file_nodes_url(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
+        api_url = url_builder.get_file_nodes(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
         data = await self.async_api_request(api_url, method='get')
         return data
     
     async def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
         # https://www.figma.com/developers/api#get-images-endpoint
     
-        api_url = self._build_get_file_images_url(file_key, ids, scale=None, format=None, version=None)
+        api_url = url_builder.get_file_images(file_key, ids, scale=None, format=None, version=None)
         data = await self.async_api_request(api_url, method='get')
         if data is not None:
             return FileImages(data['images'], data['err'])
