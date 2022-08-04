@@ -77,11 +77,12 @@ class File:
         self.linkAccess = linkAccess  # TODO check if this only appears in branch files
 
         # python helpers
-        self._parent = _parent  # using underscore to mark var as python helper, instead of a figma api var
+        # using underscore to mark var as python helper, instead of a figma api var
+        self._parent = _parent
 
 
 class Comment:
-    # A comment or reply left by a user
+    """ A comment or reply left by a user """
     def __init__(self, id, file_key, parent_id, user, created_at, resolved_at, message, client_meta, order_id):
         self.id = id  # Unique identifier for comment
         self.file_key = file_key  # The file in which the comment lives
@@ -95,14 +96,14 @@ class Comment:
 
 
 class User:  # todo not yet used, hookup
-    # A description of a user
+    """ A description of a user """
     def __init__(self, handle, img_url):
         self.handle = handle  # Name of the user
         self.img_url = img_url  # URL link to the user's profile image
 
 
 class Version:  # todo not yet used, hookup
-    # A version of a file
+    """ A version of a file """
     def __init__(self, id, created_at, label, description, user):
         self.id = id  # Unique identifier for version
         self.created_at = created_at  # the UTC ISO 8601 time at which the version was created
