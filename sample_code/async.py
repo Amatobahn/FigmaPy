@@ -27,6 +27,4 @@ result = loop.run_until_complete(figmaPy.get_file_images(file_key=file_key, ids=
 print(time.time() - start)
 print(result.images)
 
-figmapy_async.client.close()
-# TODO fix this error RuntimeWarning: coroutine 'ClientSession.close' was never awaited
-#   figma_session_async.client.close()
+loop.run_until_complete(figmapy_async.client.close())
