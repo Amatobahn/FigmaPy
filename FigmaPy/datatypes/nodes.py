@@ -155,6 +155,8 @@ class Frame(Node):
                  layoutMode=None,
                  layoutGrow=None,
                  styles=None,
+                 absoluteRenderBounds=None,
+                 isFixed=None,  # think default is True, no docs yet
                  *args, **kwargs):
         self.children = children  # An array of nodes that are direct children of this node
         self.locked = locked  # If true, layer is locked and cannot be edited
@@ -176,6 +178,7 @@ class Frame(Node):
         self.transitionEasing = transitionEasing
         self.opacity = opacity  # Opacity of the node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
+        self.absoluteRenderBounds = absoluteRenderBounds
         self.size = size  # Width and height of element. Only present if geometry=paths is passed
         self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry.
         self.clipsContent = clipsContent  # Does this node clip content outside of its bounds?
@@ -197,6 +200,7 @@ class Frame(Node):
         self.isMask = isMask  # Does this node mask sibling nodes in front of it?
         self.layoutGrow = layoutGrow,
         self.styles = styles,
+        self.isFixed = isFixed
         super().__init__(*args, **kwargs)
 
 
@@ -222,6 +226,8 @@ class Vector(Node):
                  styles=None,
                  cornerRadius=None,
                  rectangleCornerRadii=None,
+                 isFixed=None,
+                 absoluteRenderBounds=None,
                  *args, **kwargs):
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.exportSettings = exportSettings  # An array of export settings representing images to export from node
@@ -252,6 +258,8 @@ class Vector(Node):
         self.styles = styles
         self.cornerRadius = cornerRadius
         self.rectangleCornerRadii = rectangleCornerRadii
+        self.isFixed = isFixed
+        self.absoluteRenderBounds = absoluteRenderBounds
         super().__init__(*args, **kwargs)
 
 
@@ -314,9 +322,11 @@ class Text(Vector):
 
 class Slice(Node):
     # A rectangular region of the canvas that can be exported
-    def __init__(self, exportSettings, absoluteBoundingBox, size, relativeTransform, *args, **kwargs):
+    def __init__(self, exportSettings, absoluteBoundingBox, absoluteRenderBounds,
+                 size, relativeTransform, *args, **kwargs):
         self.exportSettings = exportSettings  # An array of export settings of images to export from this node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
+        self.absoluteRenderBounds = absoluteRenderBounds
         self.size = size  # Width and height of element
         self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry
         super().__init__(*args, **kwargs)
@@ -363,10 +373,12 @@ class Instance(Frame):
 
 
 class Sticky(Node):
-    def __init__(self, absoluteBoundingBox=None, authorVisible=None, backgroundColor=None, blendMode=None,
+    def __init__(self, absoluteBoundingBox=None, absoluteRenderBounds=None,
+                 authorVisible=None, backgroundColor=None, blendMode=None,
                  characters=None, effects=None, exportSettings=None, fills=None, isMask=None,
                  locked=None, opacity=None, relativeTransform=None, *args, **kwargs):
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
         self.authorVisible = authorVisible  # Boolean: If true, author name is visible.
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
         self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
@@ -384,12 +396,14 @@ class Sticky(Node):
 class ShapeWithText(Node):
     def __init__(self,
                  absoluteBoundingBox=None,
+                 absoluteRenderBounds=None,
                  backgroundColor=None, blendMode=None, characters=None, cornerRadius=None, rectangleCornerRadii=None,
                  effects=None, exportSettings=None, fills=None, isMask=None,
                  locked=None, opacity=None, shapeType=None, strokes=None, strokeWeight=None, strokeCap=None,
                  strokeJoin=None, strokeDashes=None, strokeAlign=None, relativeTransform=None,
                  *args, **kwargs):
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
         self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
         self.characters = characters  # String: Text contained within a text box
@@ -415,12 +429,14 @@ class ShapeWithText(Node):
 class Connector(Node):
     def __init__(self,
                  absoluteBoundingBox=None,
+                 absoluteRenderBounds=None,
                  backgroundColor=None, blendMode=None, characters=None, connectorStart=None, connectorEnd=None,
                  connectorLineType=None, cornerRadius=None, rectangleCornerRadii=None, effects=None,
                  exportSettings=None, fills=None, isMask=None,
                  locked=None, opacity=None, strokes=None, strokeWeight=None, strokeCap=None, strokeJoin=None,
                  strokeDashes=None, strokeAlign=None, relativeTransform=None, textBackground=None, *args, **kwargs):
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
         self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
         self.characters = characters  # String: Text contained within a text box
