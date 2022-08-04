@@ -25,27 +25,29 @@ class FigmaPy(FigmaPyBase):
             payload = ''
 
         if self.oauth2:
-            header = {'Authorization': 'Bearer {0}'.format(self.api_token)}
+            header = {'Authorization': f'Bearer {self.api_token}'}
         else:
-            header = {'X-Figma-Token': '{0}'.format(self.api_token)}
+            header = {'X-Figma-Token': self.api_token}
 
         header['Content-Type'] = 'application/json'
 
+        url = self.api_uri + endpoint
         try:
             if method == 'head':
-                response = requests.head('{0}{1}'.format(self.api_uri, endpoint), headers=header)
+                response = requests.head(url, headers=header)
             elif method == 'delete':
-                response = requests.delete('{0}{1}'.format(self.api_uri, endpoint), headers=header)
+                response = requests.delete(url, headers=header)
             elif method == 'get':
-                response = requests.get('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
+                response = requests.get(url, headers=header, data=payload)
             elif method == 'options':
-                response = requests.options('{0}{1}'.format(self.api_uri, endpoint), headers=header)
+                response = requests.options(url, headers=header)
             elif method == 'post':
-                response = requests.post('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
+                response = requests.post(url, headers=header, data=payload)
             elif method == 'put':
-                response = requests.put('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
+                response = requests.put(url, headers=header, data=payload)
             else:
                 response = None
+
             if response.status_code == 200:
                 return json.loads(response.text)
             else:
