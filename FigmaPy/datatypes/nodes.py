@@ -91,6 +91,9 @@ class Document(Node):
         self.children = children  # An array of canvases attached to the document
         super().__init__(*args, **kwargs)
 
+    @property
+    def pages(self):
+        return self.children
 
 class Canvas(Node):
     # Represents a single page
