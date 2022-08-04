@@ -79,6 +79,8 @@ class FigmaPy(FigmaPyBase):
             else:
                 return None
         except requests.HTTPError:
+            import traceback
+            print(traceback.format_exc())
             print('HTTP Error occurred while trying to generate access token.')
             return None
 

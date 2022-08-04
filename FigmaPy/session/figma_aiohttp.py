@@ -54,6 +54,8 @@ class AioHttpFigmaPy(FigmaPyBase):
             return await response.json()
 
         except Exception as e:
+            import traceback
+            print(traceback.format_exc())
             print('Error occurred attempting to make an API request. {0}'.format(e))
             return None 
             
