@@ -75,9 +75,9 @@ class Node:
         return paint.get_file_image_url()
 
     # @staticmethod
-    # def serialize(node):
-    #     raise NotImplementedError
-    #     # TODO: implement
+    def serialize(node):
+        return node.__dict__
+        # TODO: implement properly, recursive serialization
 
     def get_file_key(self):
         return get_file_key(self)
