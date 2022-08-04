@@ -56,14 +56,16 @@ class AioHttpFigmaPy(FigmaPyBase):
             print('Error occurred attempting to make an API request. {0}'.format(e))
             return None 
             
-    async def get_file(self, file_key, geometry=None, version=None, parent=None):
+    async def get_file(self, key, geometry=None, version=None, parent=None):
         # https://www.figma.com/developers/api#get-files-endpoint
         
-        api_url = self._build_get_file_url(file_key, geometry, version, parent) 
+        api_url = self._build_get_file_url(key, geometry, version, parent)
         data = await self.async_api_request(api_url, method='get')
         if data is not None:
-            return File(data['name'], data['document'], data['components'], data['lastModified'], data['thumbnailUrl'],
-                        data['schemaVersion'], data['styles'], file_key=file_key, pythonParent=parent)
+            # insert python helper attributes
+            data['mainFileKey'] = key
+            data['_parent'] = parent
+            return File(**data)
 
     async def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         # https://www.figma.com/developers/api#get-file-nodes-endpoint
