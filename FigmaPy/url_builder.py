@@ -7,20 +7,26 @@ class FigmaPyBase:
         self.oauth2 = oauth2
 
     @staticmethod
-    def _build_get_file_url(self, file_key, geometry=None, version=None, parent=None):
+    def _build_get_file_url(self, file_key, geometry=None, version=None, plugin_data=None):
         # https://www.figma.com/developers/api#get-files-endpoint
         """
         Build API URL from Parameters
         """
         optional_data = ''
-        if geometry is not None or version is not None:
+        if geometry or version or plugin_data:
             optional_data = '?'
             if geometry is not None:
-                optional_data += str(geometry)
-                if version is not None:
-                    optional_data += '&{0}'.format(str(version))
-            elif version is not None:
-                optional_data += str(version)
+                optional_data += f'geometry={geometry}'
+
+            if optional_data != '?':
+                optional_data += '&'
+            if version is not None:
+                optional_data += f'version={version}'
+
+            if optional_data != '?':
+                optional_data += '&'
+            if plugin_data is not None:
+                optional_data += f'plugin_data={plugin_data}'
 
         return 'files/{0}{1}'.format(file_key, optional_data)
 
