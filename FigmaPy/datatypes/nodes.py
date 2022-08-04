@@ -84,7 +84,7 @@ class Node:
 
 
 class Document(Node):
-    # The root node
+    # The root node of a file, containing the pages.
     def __init__(self,
                  children,
                  *args, **kwargs):
