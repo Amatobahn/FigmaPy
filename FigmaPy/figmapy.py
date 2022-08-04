@@ -2,14 +2,13 @@ import requests
 import json
 from FigmaPy.datatypes import File, Comment, FileMeta, Project
 from FigmaPy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects#, ProjectFiles
+from .url_builder import FigmaPyBase
 
 
-class FigmaPy:
-    def __init__(self, token, oauth2=False):
-        self.api_uri = 'https://api.figma.com/v1/'
-        self.token_uri = 'https://www.figma.com/oauth'
-        self.api_token = token
-        self.oauth2 = oauth2
+class FigmaPy(FigmaPyBase):
+    """
+    synchronous figma session
+    """
 
     # -------------------------------------------------------------------------
     # FIGMA API
@@ -90,34 +89,15 @@ class FigmaPy:
         """
         Get the JSON file contents for a file.
         """
-        optional_data = ''
-        if geometry or version or parent or plugin_data:
-            optional_data = '?'
-            if geometry:
-                optional_data += f'geometry={geometry}'
-
-            if optional_data != '?':
-                optional_data += '&'
-            if version:
-                optional_data += f'version={version}'
-
-            if optional_data != '?':
-                optional_data += '&'
-            if plugin_data:
-                optional_data += f'plugin_data={plugin_data}'
-
-        request = 'files/{0}{1}'.format(key, optional_data)
-
-        data = self.api_request(request, method='get')
+        api_url = self._build_get_file_url(key, geometry, version, parent)
+        data = self.api_request(api_url, method='get')
         if return_raw_data:
             return data
 
         if data is not None:
-
             # insert python helper attributes
             data['mainFileKey'] = key
             data['_parent'] = parent
-
             return File(**data)
 
     def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
@@ -150,7 +130,7 @@ class FigmaPy:
         # get partial JSON, only relevant data for the node. includes parent data.
         # nodes data can be accessed with data['nodes']
 
-    def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
+    def get_file_images(self, file_key, ids, scale=None, format=None, version=None) -> FileImages:
         # https://www.figma.com/developers/api#get-images-endpoint
         """
         Get urls for server-side rendered images from a file.
