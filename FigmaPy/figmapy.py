@@ -109,26 +109,12 @@ class FigmaPy(FigmaPyBase):
         depth: Number, Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes
         geometry: String, Set to "paths" to export vector data
         plugin_data: String, A comma separated list of plugin IDs and/or the string "shared". Any data present in the document written by those plugins will be included in the result in the `pluginData` and `sharedPluginData` properties.
+        return a partial JSON, only relevant data for the node. includes parent data.
+        nodes data can be accessed with data['nodes']
         """
-        optional_data = ''
-        if depth:
-            optional_data += f'&depth={depth}'
-        if version:
-            optional_data += f'&version={version}'
-        if geometry:
-            optional_data += f'&geometry={geometry}'
-        if plugin_data:
-            optional_data += f'&plugin_data={plugin_data}'
-
-        id_array = []
-        for id in ids:
-            id_array.append(id)
-        id_list = ','.join(id_array)
-
-        data = self.api_request(f'files/{file_key}/nodes?ids={id_list}{optional_data}', method='get')
+        api_url = self._build_get_file_nodes_url(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
+        data = self.api_request(api_url, method='get')
         return data
-        # get partial JSON, only relevant data for the node. includes parent data.
-        # nodes data can be accessed with data['nodes']
 
     def get_file_images(self, file_key, ids, scale=None, format=None, version=None) -> FileImages:
         # https://www.figma.com/developers/api#get-images-endpoint
