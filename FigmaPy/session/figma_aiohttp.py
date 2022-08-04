@@ -19,11 +19,13 @@ class AioHttpFigmaPy(FigmaPyBase):
     """
     Async version of the FigmaPy backend
     """
-    def __init__(self, client=aiohttp.ClientSession(), *args, **kwargs):
+    def __init__(self, client=None, *args, **kwargs):
         """
         client (optional): An asynchronous web session/client. Defaults to aiohttp.ClientSession().
                 Can be custom Python object that exposes methods for all HTTP verbs.
         """
+        if client is None:
+            client = aiohttp.ClientSession()
         self.client = client 
         super().__init__(*args, **kwargs)
     
