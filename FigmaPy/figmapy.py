@@ -89,7 +89,7 @@ class FigmaPy(FigmaPyBase):
         """
         Get the JSON file contents for a file.
         """
-        api_url = self._build_get_file_url(key, geometry, version, parent)
+        api_url = self._build_get_file_url(key, geometry, version, plugin_data)
         data = self.api_request(api_url, method='get')
         if return_raw_data:
             return data
