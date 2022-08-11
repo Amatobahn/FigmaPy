@@ -27,7 +27,7 @@ repos:
     rev: 5.0.4
     hooks:
       - id: flake8
-        args: ["--ignore=D400", "--exclude=*test*"]
+        args: ["--ignore=D400,E501", "--exclude=*test*"]
         additional_dependencies:
           - flake8-docstrings~=1.6.0
 
