@@ -1,10 +1,11 @@
-import FigmaPy.datatypes
 import pprint
 
-plugin_key = '102354890500261289'  # fake plugin key
-plugin_name = 'FakePluginName'
-file_key = 'REDACTED'
-auth_key = 'REDACTED'
+import FigmaPy.datatypes
+
+plugin_key = "102354890500261289"  # fake plugin key
+plugin_name = "FakePluginName"
+file_key = "REDACTED"
+auth_key = "REDACTED"
 
 figmaPy = FigmaPy.FigmaPy(auth_key)
 file = figmaPy.get_file(file_key, plugin_data=plugin_key)
