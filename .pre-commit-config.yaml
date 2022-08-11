@@ -5,11 +5,11 @@ repos:
     hooks:
       # Ensures that a file is either empty, or ends with one newline.
       - id: end-of-file-fixer
-      
+
       # Remove trailing whitespace
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
-  
+
   # Format import statements
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
