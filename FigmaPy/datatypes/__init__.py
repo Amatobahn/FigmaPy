@@ -1,6 +1,7 @@
 # flake8: noqa
-
 """
+FigmaPy Datatypes/Models
+
     to avoid circular imports, import in this order:
 
     FIGMAPY <──── DATATYPES
@@ -41,3 +42,7 @@
     the figmaPy module converts these dicts into python objects,
     and adds meta data such as parent of node for user-friendly access
 """
+from .models import *
+from .properties import *
+from .nodes import *
+from .results import *
