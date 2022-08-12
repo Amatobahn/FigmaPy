@@ -16,16 +16,7 @@ class Node:
     """Figma Node"""
 
     def __init__(
-        self,
-        id,
-        name,
-        type,
-        visible=True,
-        pluginData=None,
-        sharedPluginData=None,
-        _parent=None,
-        *args,
-        **kwargs
+        self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, _parent=None, *args, **kwargs
     ):
         """Create a new instance of Node"""
         # figma data
@@ -192,9 +183,7 @@ class Frame(Node):
         **kwargs
     ):
         """Create a new Frame"""
-        self.children = (
-            children  # An array of nodes that are direct children of this node
-        )
+        self.children = children  # An array of nodes that are direct children of this node
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.background = background  # [DEPRECATED] Background of the node. This is deprecated, as backgrounds for frames are now in the fills field.
         self.backgroundColor = backgroundColor  # [DEPRECATED] Background color of the node. This is deprecated, as frames now support more than a solid color as a background. Please use the fills field instead.
@@ -205,31 +194,19 @@ class Frame(Node):
         self.cornerRadius = cornerRadius
         self.rectangleCornerRadii = rectangleCornerRadii
         self.exportSettings = exportSettings  # An array of export settings representing images to export from node
-        self.blendMode = (
-            blendMode  # How this node blends with nodes behind it in the scene
-        )
-        self.preserveRatio = (
-            preserveRatio  # Keep height and width constrained to same ratio
-        )
-        self.constraints = (
-            constraints  # Horizontal and vertical layout constraints for node
-        )
+        self.blendMode = blendMode  # How this node blends with nodes behind it in the scene
+        self.preserveRatio = preserveRatio  # Keep height and width constrained to same ratio
+        self.constraints = constraints  # Horizontal and vertical layout constraints for node
         self.layoutAlign = layoutAlign
-        self.transitionNodeID = (
-            transitionNodeID  # Node ID of node to transition to in prototyping
-        )
+        self.transitionNodeID = transitionNodeID  # Node ID of node to transition to in prototyping
         self.transitionDuration = transitionDuration
         self.transitionEasing = transitionEasing
         self.opacity = opacity  # Opacity of the node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.absoluteRenderBounds = absoluteRenderBounds
         self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relativeTransform = (
-            relativeTransform  # Use to transform coordinates in geometry.
-        )
-        self.clipsContent = (
-            clipsContent  # Does this node clip content outside of its bounds?
-        )
+        self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry.
+        self.clipsContent = clipsContent  # Does this node clip content outside of its bounds?
         self.layoutMode = layoutMode
         self.primaryAxisSizingMode = primaryAxisSizingMode
         self.counterAxisSizingMode = counterAxisSizingMode
@@ -306,43 +283,29 @@ class Vector(Node):
         """Create a new instance of Vector"""
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.exportSettings = exportSettings  # An array of export settings representing images to export from node
-        self.blendMode = (
-            blendMode  # How this node blends with nodes behind it in the scene
-        )
-        self.preserveRatio = (
-            preserveRatio  # Keep height and width constrained to same ratio
-        )
+        self.blendMode = blendMode  # How this node blends with nodes behind it in the scene
+        self.preserveRatio = preserveRatio  # Keep height and width constrained to same ratio
         self.layoutAlign = layoutAlign
         self.layoutGrow = layoutGrow
-        self.constraints = (
-            constraints  # Horizontal and vertical layout constraints for node
-        )
-        self.transitionNodeID = (
-            transitionNodeID  # Node ID of node to transition to in prototyping
-        )
+        self.constraints = constraints  # Horizontal and vertical layout constraints for node
+        self.transitionNodeID = transitionNodeID  # Node ID of node to transition to in prototyping
         self.transitionNodeDuration = transitionNodeDuration
         self.transitionEasing = transitionEasing
         self.opacity = opacity  # Opacity of the node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.effects = effects  # An array of effects attached to this node
         self.size = size  # Width and height of element. Only present if geometry=paths is passed
-        self.relativeTransform = (
-            relativeTransform  # Use to transform coordinates in geometry.
-        )
+        self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry.
         self.isMask = isMask  # Does this node mask sibling nodes in front of it?
         self.fills = fills  # An array of fill paints applied to the node
-        self.fillGeometry = (
-            fillGeometry  # An array of paths representing the object fill
-        )
+        self.fillGeometry = fillGeometry  # An array of paths representing the object fill
         self.strokes = strokes  # An array of stroke paints applied to the node
         self.strokeWeight = strokeWeight  # The weight of strokes on the node
         self.strokeCap = strokeCap
         self.strokeJoin = strokeJoin
         self.strokeDashes = strokeDashes
         self.strokeMiterAngle = strokeMiterAngle
-        self.strokeGeometry = (
-            strokeGeometry  # An array of paths representing the object stroke
-        )
+        self.strokeGeometry = strokeGeometry  # An array of paths representing the object stroke
         self.strokeAlign = strokeAlign  # Where stroke is drawn relative to vector outline as a string enum
         self.styles = styles
         self.cornerRadius = cornerRadius
@@ -357,9 +320,7 @@ class BooleanOperation(Vector):
 
     def __init__(self, children, booleanOperation, *args, **kwargs):
         """Create a new instance of BooleanOperation"""
-        self.children = (
-            children  # An array of nodes that are direct children of this node
-        )
+        self.children = children  # An array of nodes that are direct children of this node
         self.booleanOperation = booleanOperation
         super().__init__(*args, **kwargs)
 
@@ -450,9 +411,7 @@ class Text(Vector):
         """Create a new instance of Text"""
         self.characters = characters  # Text contained within text box
         self.style = style  # Style of text including font family and weight
-        self.characterStyleOverrides = (
-            characterStyleOverrides  # Array with same number of elements as characters
-        )
+        self.characterStyleOverrides = characterStyleOverrides  # Array with same number of elements as characters
         self.styleOverrideTable = styleOverrideTable  # Map from ID to TypeStyle for looking up style overrides
         self.lineTypes = lineTypes
         self.lineIndentations = lineIndentations
@@ -464,23 +423,14 @@ class Slice(Node):
     """A rectangular region of the canvas that can be exported"""
 
     def __init__(
-        self,
-        exportSettings,
-        absoluteBoundingBox,
-        absoluteRenderBounds,
-        size,
-        relativeTransform,
-        *args,
-        **kwargs
+        self, exportSettings, absoluteBoundingBox, absoluteRenderBounds, size, relativeTransform, *args, **kwargs
     ):
         """Create a new instance of Slice"""
         self.exportSettings = exportSettings  # An array of export settings of images to export from this node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.absoluteRenderBounds = absoluteRenderBounds
         self.size = size  # Width and height of element
-        self.relativeTransform = (
-            relativeTransform  # Use to transform coordinates in geometry
-        )
+        self.relativeTransform = relativeTransform  # Use to transform coordinates in geometry
         super().__init__(*args, **kwargs)
 
 
@@ -558,18 +508,24 @@ class Sticky(Node):
         **kwargs
     ):
         """Create a new instance of Sticky"""
-        self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
-        self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
+        self.absoluteBoundingBox = (
+            absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        )
+        self.absoluteRenderBounds = (
+            absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
+        )
         self.authorVisible = authorVisible  # Boolean: If true, author name is visible.
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
         self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
         self.characters = characters  # String: Text contained within a text box
-        self.effects = effects  # Effect[]: An array of effects attached to this node (see effects section for more details)
-        self.exportSettings = exportSettings  # ExportSetting[]: An array of export settings representing images to export from the node
-        self.fills = fills  # Paint[]: An array of fill paints applied to the node
-        self.isMask = (
-            isMask  # Boolean: Does this node mask sibling nodes in front of it?
+        self.effects = (
+            effects  # Effect[]: An array of effects attached to this node (see effects section for more details)
         )
+        self.exportSettings = (
+            exportSettings  # ExportSetting[]: An array of export settings representing images to export from the node
+        )
+        self.fills = fills  # Paint[]: An array of fill paints applied to the node
+        self.isMask = isMask  # Boolean: Does this node mask sibling nodes in front of it?
         self.locked = locked  # Boolean: If true, sticky is locked and cannot be edited
         self.opacity = opacity  # Number: Overall opacity of paint (colors within the paint can also have opacity values which would blend with this)
         self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
@@ -606,19 +562,27 @@ class ShapeWithText(Node):
         **kwargs
     ):
         """Create a new instance of ShapeWithText"""
-        self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
-        self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
+        self.absoluteBoundingBox = (
+            absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        )
+        self.absoluteRenderBounds = (
+            absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
+        )
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
         self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
         self.characters = characters  # String: Text contained within a text box
-        self.cornerRadius = cornerRadius  # Number: Radius of each corner of the rectangle if a single radius is set for all corners
-        self.rectangleCornerRadii = rectangleCornerRadii  # Number[]: Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise
-        self.effects = effects  # Effect[]: An array of effects attached to this node (see effects section for more details)
-        self.exportSettings = exportSettings  # ExportSetting[]: An array of export settings representing images to export from the node
-        self.fills = fills  # Paint[]: An array of fill paints applied to the node
-        self.isMask = (
-            isMask  # Boolean: Does this node mask sibling nodes in front of it?
+        self.cornerRadius = (
+            cornerRadius  # Number: Radius of each corner of the rectangle if a single radius is set for all corners
         )
+        self.rectangleCornerRadii = rectangleCornerRadii  # Number[]: Array of length 4 of the radius of each corner of the rectangle, starting in the top left and proceeding clockwise
+        self.effects = (
+            effects  # Effect[]: An array of effects attached to this node (see effects section for more details)
+        )
+        self.exportSettings = (
+            exportSettings  # ExportSetting[]: An array of export settings representing images to export from the node
+        )
+        self.fills = fills  # Paint[]: An array of fill paints applied to the node
+        self.isMask = isMask  # Boolean: Does this node mask sibling nodes in front of it?
         self.locked = locked  # Boolean: If true, sticky is locked and cannot be edited
         self.opacity = opacity  # Number: Overall opacity of paint (colors within the paint can also have opacity values which would blend with this)
         self.shapeType = shapeType  # ShapeType: Shape-with-text geometric shape type.
@@ -665,29 +629,27 @@ class Connector(Node):
         **kwargs
     ):
         """Create a new instance of Connector"""
-        self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
-        self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
+        self.absoluteBoundingBox = (
+            absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
+        )
+        self.absoluteRenderBounds = (
+            absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
+        )
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
         self.blendMode = blendMode  # BlendMode: How this node blends with nodes behind it in the scene (see blend mode section for more details)
         self.characters = characters  # String: Text contained within a text box
-        self.connectorStart = (
-            connectorStart  # ConnectorEndpoint: Connector starting endpoint.
-        )
-        self.connectorEnd = (
-            connectorEnd  # ConnectorEndpoint: Connector ending endpoint.
-        )
+        self.connectorStart = connectorStart  # ConnectorEndpoint: Connector starting endpoint.
+        self.connectorEnd = connectorEnd  # ConnectorEndpoint: Connector ending endpoint.
         self.connectorLineType = connectorLineType
-        self.cornerRadius = cornerRadius  # Number: Radius of each corner of the rectangle if a single radius is set for all corners
+        self.cornerRadius = (
+            cornerRadius  # Number: Radius of each corner of the rectangle if a single radius is set for all corners
+        )
         self.rectangleCornerRadii = rectangleCornerRadii  # Number[] default: []
         self.effects = effects  # Effect[] default: []
         self.exportSettings = exportSettings  # ExportSetting[] default: []
         self.fills = fills  # Paint[] default: []
-        self.isMask = (
-            isMask  # Boolean: Does this node mask sibling nodes in front of it?
-        )
-        self.locked = (
-            locked  # Boolean: If true, connector is locked and cannot be edited
-        )
+        self.isMask = isMask  # Boolean: Does this node mask sibling nodes in front of it?
+        self.locked = locked  # Boolean: If true, connector is locked and cannot be edited
         self.opacity = opacity  # Number: Overall opacity of paint (colors within the paint can also have opacity values which would blend with this)
         self.strokes = strokes  # Paint[] default: []
         self.strokeWeight = strokeWeight  # Number: The weight of strokes on the node
@@ -695,9 +657,7 @@ class Connector(Node):
         self.strokeJoin = strokeJoin  # String: A string enum with value of "MITER", "BEVEL", or "ROUND", describing how corners in vector paths are rendered.
         self.strokeDashes = strokeDashes  # Number[] default: []
         self.strokeAlign = strokeAlign  # String: Position of stroke relative to vector outline, as a string enum
-        self.textBackground = (
-            textBackground  # ConnectorTextBackground: Connector text background.
-        )
+        self.textBackground = textBackground  # ConnectorTextBackground: Connector text background.
         self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
         super().__init__(*args, **kwargs)
 

@@ -37,13 +37,9 @@ class FigmaPy:
 
         try:
             if method == "head":
-                response = requests.head(
-                    "{0}{1}".format(self.api_uri, endpoint), headers=header
-                )
+                response = requests.head("{0}{1}".format(self.api_uri, endpoint), headers=header)
             elif method == "delete":
-                response = requests.delete(
-                    "{0}{1}".format(self.api_uri, endpoint), headers=header
-                )
+                response = requests.delete("{0}{1}".format(self.api_uri, endpoint), headers=header)
             elif method == "get":
                 response = requests.get(
                     "{0}{1}".format(self.api_uri, endpoint),
@@ -51,9 +47,7 @@ class FigmaPy:
                     data=payload,
                 )
             elif method == "options":
-                response = requests.options(
-                    "{0}{1}".format(self.api_uri, endpoint), headers=header
-                )
+                response = requests.options("{0}{1}".format(self.api_uri, endpoint), headers=header)
             elif method == "post":
                 response = requests.post(
                     "{0}{1}".format(self.api_uri, endpoint),
@@ -148,9 +142,7 @@ class FigmaPy:
 
             return File(**data)
 
-    def get_file_nodes(
-        self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None
-    ):
+    def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         """
         Retrieve file nodes by id
 
@@ -179,9 +171,7 @@ class FigmaPy:
             id_array.append(id)
         id_list = ",".join(id_array)
 
-        data = self.api_request(
-            f"files/{file_key}/nodes?ids={id_list}{optional_data}", method="get"
-        )
+        data = self.api_request(f"files/{file_key}/nodes?ids={id_list}{optional_data}", method="get")
         return data
         # get partial JSON, only relevant data for the node. includes parent data.
         # nodes data can be accessed with data['nodes']
@@ -261,14 +251,10 @@ class FigmaPy:
         """
         print(client_meta)
         if client_meta is not None:
-            payload = '{{"message":"{0}","client_meta":{1}}}'.format(
-                message.title(), client_meta
-            )
+            payload = '{{"message":"{0}","client_meta":{1}}}'.format(message.title(), client_meta)
         else:
             payload = "{{'message':'{0}'}}".format(message)
-        data = self.api_request(
-            "files/{0}/comments".format(file_key), method="post", payload=payload
-        )
+        data = self.api_request("files/{0}/comments".format(file_key), method="post", payload=payload)
         if data is not None:
             return Comment(
                 data["id"],
@@ -343,7 +329,5 @@ class FigmaPy:
                 if paint.type != "IMAGE":
                     vector_ids.append(node.id)
 
-        data = self.get_file_images(
-            file_key, ids=vector_ids, scale=scale, format=format
-        )
+        data = self.get_file_images(file_key, ids=vector_ids, scale=scale, format=format)
         return data.images

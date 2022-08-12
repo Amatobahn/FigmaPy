@@ -24,9 +24,7 @@ nodes = page1.get_children_recursively()
 # # -------------------------------------------------------
 
 
-file_images = figmaPy.get_file_images(
-    file_key, ids=[node.id for node in nodes], scale=1, format="svg"
-)
+file_images = figmaPy.get_file_images(file_key, ids=[node.id for node in nodes], scale=1, format="svg")
 print(file_images)
 
 i = 0

@@ -47,17 +47,13 @@ class FileMeta:
     This lives inside a project
     """
 
-    def __init__(
-        self, key, last_modified, name, thumbnail_url, branches=None, _parent=None
-    ):
+    def __init__(self, key, last_modified, name, thumbnail_url, branches=None, _parent=None):
         """Create new FileMeta instance for a project file"""
         self.key: str = key
         self.last_modified: str = last_modified
         self.name: str = name
         self.thumbnail_url: str = thumbnail_url
-        self.branches = (
-            branches  # -> array of Branch metadata # todo deserialize branches
-        )
+        self.branches = branches  # -> array of Branch metadata # todo deserialize branches
 
         # python helpers
         self._parent = _parent  # the project this file belongs to
@@ -65,9 +61,7 @@ class FileMeta:
 
     def get_file_content(self, figmaPy, geometry=None, version=None):
         """Load the file from the server"""
-        return figmaPy.get_file(
-            key=self.key, geometry=geometry, version=version, parent=self
-        )
+        return figmaPy.get_file(key=self.key, geometry=geometry, version=version, parent=self)
 
 
 class File:
@@ -98,9 +92,7 @@ class File:
         self.editorType = editorType
         self.thumbnailUrl = thumbnailUrl  # File thumbnail URL
         self.version = version
-        self.document = nodes.Document(
-            **document, _parent=self
-        )  # Document content from a file
+        self.document = nodes.Document(**document, _parent=self)  # Document content from a file
         self.components = components  # Document components from a file
         self.componentSets = componentSets
         self.schemaVersion = schemaVersion  # Schema version from a file
@@ -132,16 +124,10 @@ class Comment:
         """Create a new Comment instance"""
         self.id = id  # Unique identifier for comment
         self.file_key = file_key  # The file in which the comment lives
-        self.parent_id = (
-            parent_id  # If present, the id of the comment to which this is the reply
-        )
+        self.parent_id = parent_id  # If present, the id of the comment to which this is the reply
         self.user = user  # The user who left the comment
-        self.created_at = (
-            created_at  # The UTC ISO 8601 time at which the comment was left
-        )
-        self.resolved_at = (
-            resolved_at  # If set, the UTC ISO 8601 time the comment was resolved
-        )
+        self.created_at = created_at  # The UTC ISO 8601 time at which the comment was left
+        self.resolved_at = resolved_at  # If set, the UTC ISO 8601 time the comment was resolved
         self.message = message  # Content of comment
         self.client_meta = client_meta  # The position of the comment. Absolute coordinates or relative offset
         self.order_id = order_id  # Only set for top level comments. The number displayed with the comment in the UI
@@ -170,11 +156,7 @@ class Version:
     def __init__(self, id, created_at, label, description, user):
         """Create a new instance of a Version"""
         self.id = id  # Unique identifier for version
-        self.created_at = (
-            created_at  # the UTC ISO 8601 time at which the version was created
-        )
+        self.created_at = created_at  # the UTC ISO 8601 time at which the version was created
         self.label = label  # The label given to the version in the editor
-        self.description = (
-            description  # The description of the version as entered in the editor
-        )
+        self.description = description  # The description of the version as entered in the editor
         self.user = user  # The user that created the version

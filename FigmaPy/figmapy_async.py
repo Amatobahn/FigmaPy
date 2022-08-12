@@ -114,9 +114,7 @@ class FigmaPyBase:
                 pythonParent=parent,
             )
 
-    def _build_get_file_nodes_url(
-        self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None
-    ):
+    def _build_get_file_nodes_url(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         """
         Build API URL from Parameters
 
@@ -139,9 +137,7 @@ class FigmaPyBase:
 
         return "files/{0}/nodes?ids={1}{2}".format(file_key, id_list, optional_data)
 
-    def get_file_nodes(
-        self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None
-    ):
+    def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         """
         Get file Nodes
 
@@ -153,9 +149,7 @@ class FigmaPyBase:
         data = self.api_request(api_url, method="get")
         return data
 
-    def _build_get_file_images_url(
-        self, file_key, ids, scale=None, format=None, version=None
-    ):
+    def _build_get_file_images_url(self, file_key, ids, scale=None, format=None, version=None):
         """Build API request URL for file images"""
         optional_data = ""
         if scale is not None or format is not None or version is not None:
@@ -179,9 +173,7 @@ class FigmaPyBase:
 
         Figma Docs: https://www.figma.com/developers/api#get-images-endpoint
         """
-        api_url = self._build_get_file_images_url(
-            file_key, ids, scale=None, format=None, version=None
-        )
+        api_url = self._build_get_file_images_url(file_key, ids, scale=None, format=None, version=None)
         data = self.api_request(api_url, method="get")
         if data is not None:
             return FileImages(data["images"], data["err"])
@@ -218,11 +210,7 @@ class AioHttpFigmaPy(FigmaPyBase):
         try:
             request_func = getattr(self.client, method)
         except AttributeError as e:
-            print(
-                "Unsupported HTTP request, could be as a result of an invalid method {0}".format(
-                    e
-                )
-            )
+            print("Unsupported HTTP request, could be as a result of an invalid method {0}".format(e))
 
         try:
             # Check if we need to pass data as a param
@@ -258,9 +246,7 @@ class AioHttpFigmaPy(FigmaPyBase):
                 pythonParent=parent,
             )
 
-    async def get_file_nodes(
-        self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None
-    ):
+    async def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         """
         Get file nodes asynchronously
 
@@ -272,17 +258,13 @@ class AioHttpFigmaPy(FigmaPyBase):
         data = await self.async_api_request(api_url, method="get")
         return data
 
-    async def get_file_images(
-        self, file_key, ids, scale=None, format=None, version=None
-    ):
+    async def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
         """
         Get file images asynchronously
 
         Figma Docs: https://www.figma.com/developers/api#get-images-endpoint
         """
-        api_url = self._build_get_file_images_url(
-            file_key, ids, scale=None, format=None, version=None
-        )
+        api_url = self._build_get_file_images_url(file_key, ids, scale=None, format=None, version=None)
         data = await self.async_api_request(api_url, method="get")
         if data is not None:
             return FileImages(data["images"], data["err"])

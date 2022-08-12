@@ -23,9 +23,7 @@ class ExportSetting:
         """Create a new instance of ExportSetting"""
         self.suffix = suffix  # File suffix to append all file names
         self.format = format  # Image type, string enum that supports values 'JPG', 'PNG', and 'SVG'
-        self.constraint = (
-            constraint  # Constraint that determines sizing of exported asset
-        )
+        self.constraint = constraint  # Constraint that determines sizing of exported asset
 
 
 class Constraint:
@@ -94,9 +92,7 @@ class LayoutConstraint:
 class LayoutGrid:
     """Guides to align and place objects within a frame"""
 
-    def __init__(
-        self, pattern, sectionSize, visible, color, alignment, gutterSize, offset, count
-    ):
+    def __init__(self, pattern, sectionSize, visible, color, alignment, gutterSize, offset, count):
         """Create a new instance of LayoutGrid"""
         self.pattern = pattern  # Orientatoin of the grid as a string enum
         self.sectionSize = sectionSize  # Width of column grid or height of row grid or square grid spacing
@@ -131,9 +127,7 @@ class Effect:
         # The following properties are for shadows only:
         self.color = color  # The color of the shadow
         self.blendMode = blendMode  # Blend mode of the shadow
-        self.offset = (
-            offset  # How far the shadow is projected in the x and y directions
-        )
+        self.offset = offset  # How far the shadow is projected in the x and y directions
         self.spread = spread
         self.showShadowBehindNode = showShadowBehindNode
 
@@ -173,9 +167,7 @@ class Paint:
         self.color = color  # Solid color of the paint
 
         # For gradient paints:
-        self.gradientHandlePositions = (
-            gradientHandlePositions  # Three vectors, each are pos in normalized space
-        )
+        self.gradientHandlePositions = gradientHandlePositions  # Three vectors, each are pos in normalized space
         self.gradientStops = gradientStops  # Positions of key points along the gradient axis with the anchored colors
 
         # For image paints:
@@ -248,9 +240,7 @@ class Path:
     def __init__(self, path, windingRule):
         """Create a new instance of Path"""
         self.path = path  # A sequence of path commands in SVG notation
-        self.windingRule = (
-            windingRule  # Winding rule for the path, either 'EVENODD' or 'NONZERO'
-        )
+        self.windingRule = windingRule  # Winding rule for the path, either 'EVENODD' or 'NONZERO'
 
 
 class FrameOffset:
@@ -267,9 +257,7 @@ class ColorStop:
 
     def __init__(self, position, color):
         """Create a new instance of ColorStop"""
-        self.position = (
-            position  # Value between 0 and 1 representing position along gradient axis
-        )
+        self.position = position  # Value between 0 and 1 representing position along gradient axis
         self.color = color  # Color attached to corresponding position
 
 
@@ -296,18 +284,12 @@ class TypeStyle:
         self.italic = italic  # Is text italicized?
         self.font_weight = font_weight  # Numeric font weight
         self.font_size = font_size  # Font size in px
-        self.text_align_horizontal = (
-            text_align_horizontal  # Horizontal text alignment as string enum
-        )
-        self.text_align_vertical = (
-            text_align_vertical  # Vertical text alignment as string enum
-        )
+        self.text_align_horizontal = text_align_horizontal  # Horizontal text alignment as string enum
+        self.text_align_vertical = text_align_vertical  # Vertical text alignment as string enum
         self.letter_spacing = letter_spacing  # Space between characters in px
         self.fills = fills  # Paints applied to characters
         self.line_height_px = line_height_px  # Line height in px
-        self.line_height_percent = (
-            line_height_percent  # Line height as a percentage of normal line height
-        )
+        self.line_height_percent = line_height_percent  # Line height as a percentage of normal line height
 
         deserialize_properties(self)
 
@@ -322,9 +304,7 @@ class ComponentDescription:
     def __init__(self, name, description):
         """Create a new instance of ComponentDescription"""
         self.name = name  # The name of the component
-        self.description = (
-            description  # The description of the component as entered in the editor
-        )
+        self.description = description  # The description of the component as entered in the editor
 
 
 def deserialize_properties(self):
