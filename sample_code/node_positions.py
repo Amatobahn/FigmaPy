@@ -1,7 +1,7 @@
 import FigmaPy
 
-file_key = 'REDACTED'
-auth_key = 'REDACTED'
+file_key = "REDACTED"
+auth_key = "REDACTED"
 
 figmaPy = FigmaPy.FigmaPy(auth_key)
 file = figmaPy.get_file(file_key)
