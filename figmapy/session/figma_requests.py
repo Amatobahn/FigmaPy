@@ -239,3 +239,7 @@ class FigmaPy(FigmaPyBase):
 
         data = self.get_file_images(file_key, ids=vector_ids, scale=scale, format=format)
         return data.images
+
+    # helper functions shared with sync version
+    def get_file_images_sync(self, *args, **kwargs):
+        return self.get_file_images(*args, **kwargs)

@@ -5,6 +5,7 @@
 from typing import List
 
 from . import nodes
+from figmapy.session import current
 
 
 # -------------------------------------------------------------------------
@@ -79,6 +80,14 @@ class File:
         # python helpers
         # using underscore to mark var as python helper, instead of a figma api var
         self._parent = _parent
+
+    def get_file_images(self, ids, scale=None, format=None, version=None):
+        """syncronously get all images from the file"""
+        return current.figma_session.get_file_images_sync(file_key=self.mainFileKey,
+                                                          ids=ids,
+                                                          scale=scale,
+                                                          format=format,
+                                                          version=version)
 
 
 class Comment:
