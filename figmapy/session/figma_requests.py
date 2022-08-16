@@ -1,7 +1,7 @@
 import requests
 import json
-from FigmaPy.datatypes import File, Comment, FileMeta, Project
-from FigmaPy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects#, ProjectFiles
+from figmapy.datatypes import File, Comment, FileMeta, Project
+from figmapy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects#, ProjectFiles
 from . import url_builder
 from .base import FigmaPyBase
 

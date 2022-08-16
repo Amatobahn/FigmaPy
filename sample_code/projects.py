@@ -1,9 +1,9 @@
-import FigmaPy
+import figmapy
 
 team_key = 'REDACTED'
 auth_key = 'REDACTED'
 
-figmaPy = FigmaPy.FigmaPy(auth_key)
+figmaPy = figmapy.FigmaPy(auth_key)
 
 projects = figmaPy.get_team_projects(team_key)
 # projects:  [{'id': '34443824', 'name': 'Visual Style Guide'}]

@@ -1,4 +1,4 @@
-import FigmaPy
+import figmapy
 from pathlib import Path
 import requests
 
@@ -11,7 +11,7 @@ file_key = 'REDACTED'
 auth_key = 'REDACTED'
 
 # # ------- get file content, nodes -----------
-figmaPy = FigmaPy.FigmaPy(auth_key)
+figmaPy = figmapy.FigmaPy(auth_key)
 file = figmaPy.get_file(file_key)
 page1 = file.document.children[0]
 nodes = page1.get_children_recursively()

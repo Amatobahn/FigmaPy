@@ -1,4 +1,4 @@
-import FigmaPy.datatypes
+import figmapy.datatypes
 import pprint
 
 plugin_key = '102354890500261289'  # fake plugin key
@@ -6,7 +6,7 @@ plugin_name = 'FakePluginName'
 file_key = 'REDACTED'
 auth_key = 'REDACTED'
 
-figmaPy = FigmaPy.FigmaPy(auth_key)
+figmaPy = figmapy.FigmaPy(auth_key)
 file = figmaPy.get_file(file_key, plugin_data=plugin_key)
 page1 = file.document.children[0]
 
