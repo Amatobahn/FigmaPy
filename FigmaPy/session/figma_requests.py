@@ -2,14 +2,14 @@ import requests
 import json
 from FigmaPy.datatypes import File, Comment, FileMeta, Project
 from FigmaPy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects#, ProjectFiles
+from . import url_builder
+from .base import FigmaPyBase
 
 
-class FigmaPy:
-    def __init__(self, token, oauth2=False):
-        self.api_uri = 'https://api.figma.com/v1/'
-        self.token_uri = 'https://www.figma.com/oauth'
-        self.api_token = token
-        self.oauth2 = oauth2
+class FigmaPy(FigmaPyBase):
+    """
+    synchronous figma session
+    """
 
     # -------------------------------------------------------------------------
     # FIGMA API
@@ -24,27 +24,29 @@ class FigmaPy:
             payload = ''
 
         if self.oauth2:
-            header = {'Authorization': 'Bearer {0}'.format(self.api_token)}
+            header = {'Authorization': f'Bearer {self.api_token}'}
         else:
-            header = {'X-Figma-Token': '{0}'.format(self.api_token)}
+            header = {'X-Figma-Token': self.api_token}
 
         header['Content-Type'] = 'application/json'
 
+        url = self.api_uri + endpoint
         try:
             if method == 'head':
-                response = requests.head('{0}{1}'.format(self.api_uri, endpoint), headers=header)
+                response = requests.head(url, headers=header)
             elif method == 'delete':
-                response = requests.delete('{0}{1}'.format(self.api_uri, endpoint), headers=header)
+                response = requests.delete(url, headers=header)
             elif method == 'get':
-                response = requests.get('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
+                response = requests.get(url, headers=header, data=payload)
             elif method == 'options':
-                response = requests.options('{0}{1}'.format(self.api_uri, endpoint), headers=header)
+                response = requests.options(url, headers=header)
             elif method == 'post':
-                response = requests.post('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
+                response = requests.post(url, headers=header, data=payload)
             elif method == 'put':
-                response = requests.put('{0}{1}'.format(self.api_uri, endpoint), headers=header, data=payload)
+                response = requests.put(url, headers=header, data=payload)
             else:
                 response = None
+
             if response.status_code == 200:
                 return json.loads(response.text)
             else:
@@ -77,6 +79,8 @@ class FigmaPy:
             else:
                 return None
         except requests.HTTPError:
+            import traceback
+            print(traceback.format_exc())
             print('HTTP Error occurred while trying to generate access token.')
             return None
 
@@ -90,34 +94,15 @@ class FigmaPy:
         """
         Get the JSON file contents for a file.
         """
-        optional_data = ''
-        if geometry or version or parent or plugin_data:
-            optional_data = '?'
-            if geometry:
-                optional_data += f'geometry={geometry}'
-
-            if optional_data != '?':
-                optional_data += '&'
-            if version:
-                optional_data += f'version={version}'
-
-            if optional_data != '?':
-                optional_data += '&'
-            if plugin_data:
-                optional_data += f'plugin_data={plugin_data}'
-
-        request = 'files/{0}{1}'.format(key, optional_data)
-
-        data = self.api_request(request, method='get')
+        api_url = url_builder.get_file(key, geometry, version, plugin_data)
+        data = self.api_request(api_url, method='get')
         if return_raw_data:
             return data
 
         if data is not None:
-
             # insert python helper attributes
             data['mainFileKey'] = key
             data['_parent'] = parent
-
             return File(**data)
 
     def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
@@ -129,46 +114,22 @@ class FigmaPy:
         depth: Number, Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes
         geometry: String, Set to "paths" to export vector data
         plugin_data: String, A comma separated list of plugin IDs and/or the string "shared". Any data present in the document written by those plugins will be included in the result in the `pluginData` and `sharedPluginData` properties.
+
+        return a partial JSON, only relevant data for the node. includes parent data.
+        nodes data can be accessed with data['nodes']
         """
-        optional_data = ''
-        if depth:
-            optional_data += f'&depth={depth}'
-        if version:
-            optional_data += f'&version={version}'
-        if geometry:
-            optional_data += f'&geometry={geometry}'
-        if plugin_data:
-            optional_data += f'&plugin_data={plugin_data}'
-
-        id_array = []
-        for id in ids:
-            id_array.append(id)
-        id_list = ','.join(id_array)
-
-        data = self.api_request(f'files/{file_key}/nodes?ids={id_list}{optional_data}', method='get')
+        api_url = url_builder.get_file_nodes(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
+        data = self.api_request(api_url, method='get')
         return data
-        # get partial JSON, only relevant data for the node. includes parent data.
-        # nodes data can be accessed with data['nodes']
 
-    def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
+    def get_file_images(self, file_key, ids, scale=None, format=None, version=None) -> FileImages:
         # https://www.figma.com/developers/api#get-images-endpoint
         """
         Get urls for server-side rendered images from a file.
         If the node is not an image, a rasterized version of the node will be returned.
         """
-        optional_data = ''
-        if scale is not None or format is not None or version is not None:
-            if scale is not None:
-                optional_data += '&scale={0}'.format(str(scale))
-            if format is not None:
-                optional_data += '&format={0}'.format(str(format))
-            if version is not None:
-                optional_data += '&version={0}'.format(str(version))
-        id_array = []
-        for id in ids:
-            id_array.append(id)
-        id_list = ','.join(id_array)
-        data = self.api_request('images/{0}?ids={1}{2}'.format(file_key, id_list, optional_data), method='get')
+        api_url = url_builder.get_file_images(file_key, ids, scale=None, format=None, version=None)
+        data = self.api_request(api_url, method='get')
         if data is not None:
             return FileImages(data['images'], data['err'])
 
@@ -242,7 +203,6 @@ class FigmaPy:
     # -------------------------------------------------------------------------
     # SCOPE: PROJECTS -> FILES
     # -------------------------------------------------------------------------
-
     def get_project_files(self, project_id):
         """
         List the files in a given project (but don't load their content)

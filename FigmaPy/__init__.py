@@ -17,5 +17,6 @@ __license__ = 'Apache V2.0'
 __copyright__ = 'Copyright 2018 Greg Amato'
 __version__ = '2018.1.0'
 
-from .figmapy import *
-from .figmapy_async import *
+from .session.figma_aiohttp import AioHttpFigmaPy
+from .session.figma_requests import FigmaPy
+from . import datatypes
