@@ -1,4 +1,4 @@
-from FigmaPy.datatypes.models import Comment
+from figmapy.datatypes.models import Comment
 
 
 # result wrappers for GET commands

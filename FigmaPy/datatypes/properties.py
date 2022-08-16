@@ -1,5 +1,5 @@
 from enum import Enum
-from FigmaPy.utils import get_file_key
+from figmapy.utils import get_file_key
 
 
 # -------------------------------------------------------------------------

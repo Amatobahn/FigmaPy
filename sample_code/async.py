@@ -1,4 +1,4 @@
-import FigmaPy
+import figmapy
 import asyncio
 import time
 
@@ -8,7 +8,7 @@ auth_key = 'REDACTED'
 # TODO create a better sample, this actually results in the same times
 #  and the async version sometimes crashes randomly with a no key find in dict error
 
-figmaPy = FigmaPy.FigmaPy(token=auth_key)
+figmaPy = figmapy.FigmaPy(token=auth_key)
 file = figmaPy.get_file(file_key)
 page1 = file.document.children[0]
 nodes = page1.get_children_recursively()
@@ -35,7 +35,7 @@ def sync_main(n):
 
 async def async_request(index):
     tic = time.time()
-    figmaPy = FigmaPy.AioHttpFigmaPy(token=auth_key)
+    figmaPy = figmapy.AioHttpFigmaPy(token=auth_key)
     result = await figmaPy.get_file_images(file_key=file_key, ids=node_ids)
     toc = time.time()
     time_spent = toc - tic

@@ -4,8 +4,8 @@ except ImportError:
     print("Async dependencies have not been installed: [httpx]")
 
 import requests
-from FigmaPy.datatypes import File, Comment, FileMeta, Project
-from FigmaPy.datatypes.results import (
+from figmapy.datatypes import File, Comment, FileMeta, Project
+from figmapy.datatypes.results import (
     FileImages,
     FileVersions,
     Comments,
