@@ -1,7 +1,7 @@
 import requests
 import json
 from figmapy.datatypes import File, Comment, FileMeta, Project
-from figmapy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects#, ProjectFiles
+from figmapy.datatypes.results import FileImages, FileVersions, Comments, TeamProjects  # , ProjectFiles
 from . import url_builder
 from .base import FigmaPyBase
 
@@ -17,6 +17,7 @@ class FigmaPy(FigmaPyBase):
     '''
     Request Figma API
     '''
+
     def api_request(self, endpoint, method='get', payload=None):
         method = method.lower()
 
@@ -62,13 +63,14 @@ class FigmaPy(FigmaPyBase):
     """
     Create token from client_id, client_secret, code
     """
+
     def create_token(self, client_id, client_secret, redirect_uri, code):
         payload = {
             'client_id': '{0}'.format(client_id),
             'client_secret': '{0}'.format(client_secret),
             'grant_type': 'authorization_code',
             'redirect_uri': '{0}'.format(redirect_uri),
-            'code': '{0}'.format(code)
+            'code': '{0}'.format(code),
         }
         try:
             response = requests.post(self.token_uri, data=payload)
@@ -80,6 +82,7 @@ class FigmaPy(FigmaPyBase):
                 return None
         except requests.HTTPError:
             import traceback
+
             print(traceback.format_exc())
             print('HTTP Error occurred while trying to generate access token.')
             return None
@@ -88,8 +91,9 @@ class FigmaPy(FigmaPyBase):
     # SCOPE: FILES
     # -------------------------------------------------------------------------
 
-    def get_file(self, key, version=None, geometry=None, plugin_data=None,
-                 parent=None, return_raw_data=False) -> File or dict:
+    def get_file(
+        self, key, version=None, geometry=None, plugin_data=None, parent=None, return_raw_data=False
+    ) -> File or dict:
         # https://www.figma.com/developers/api#get-files-endpoint
         """
         Get the JSON file contents for a file.
@@ -181,8 +185,17 @@ class FigmaPy(FigmaPyBase):
             payload = "{{'message':'{0}'}}".format(message)
         data = self.api_request('files/{0}/comments'.format(file_key), method='post', payload=payload)
         if data is not None:
-            return Comment(data['id'], data['file_key'], data['parent_id'], data['user'], data['created_at'],
-                           data['resolved_at'], data['message'], data['client_meta'], data['order_id'])
+            return Comment(
+                data['id'],
+                data['file_key'],
+                data['parent_id'],
+                data['user'],
+                data['created_at'],
+                data['resolved_at'],
+                data['message'],
+                data['client_meta'],
+                data['order_id'],
+            )
 
     def delete_comment(self):
         # https://www.figma.com/developers/api#delete-comments-endpoint

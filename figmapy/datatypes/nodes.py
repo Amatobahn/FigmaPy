@@ -11,8 +11,9 @@ from .properties import deserialize_properties
 
 
 class Node:
-    def __init__(self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, _parent=None, *args,
-                 **kwargs):
+    def __init__(
+        self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, _parent=None, *args, **kwargs
+    ):
         # figma data
         self.id = id  # A string uniquely identifying this node within the document.
         self.name = name  # The name given to the node by the user in the tool.
@@ -26,8 +27,10 @@ class Node:
         self.deserialize_properties()
 
         if args or kwargs:
-            print("Node class has been instantiated with unsupported args and kwargs."
-                  "this is likely due to a change in the Figma API, or an unsupported parameter in this wrapper")
+            print(
+                "Node class has been instantiated with unsupported args and kwargs."
+                "this is likely due to a change in the Figma API, or an unsupported parameter in this wrapper"
+            )
             print(args, kwargs)
             print(self)
 
@@ -85,9 +88,7 @@ class Node:
 
 class Document(Node):
     # The root node of a file, containing the pages.
-    def __init__(self,
-                 children,
-                 *args, **kwargs):
+    def __init__(self, children, *args, **kwargs):
         self.children = children  # An array of canvases attached to the document
         super().__init__(*args, **kwargs)
 
@@ -95,16 +96,20 @@ class Document(Node):
     def pages(self):
         return self.children
 
+
 class Canvas(Node):
     # Represents a single page
-    def __init__(self,
-                 children,
-                 backgroundColor,
-                 prototypeStartNodeID=None,
-                 prototypeDevice=None,
-                 flowStartingPoints=None,
-                 exportSettings=None,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        children,
+        backgroundColor,
+        prototypeStartNodeID=None,
+        prototypeDevice=None,
+        flowStartingPoints=None,
+        exportSettings=None,
+        *args,
+        **kwargs
+    ):
         self.children = children  # An array of top level layers on the canvas
         self.backgroundColor = backgroundColor  # Background color of the canvas
         self.prototypeStartNodeID = prototypeStartNodeID  # DEPRECATED] Node ID that corresponds to the start frame for prototypes. This is deprecated with the introduction of multiple flows. Please use the flowStartingPoints field.
@@ -116,51 +121,54 @@ class Canvas(Node):
 
 class Frame(Node):
     # A node of fixed size containing other nodes
-    def __init__(self,
-                 children,
-                 background,
-                 backgroundColor,
-                 blendMode,
-                 constraints,
-                 absoluteBoundingBox,
-                 clipsContent,
-                 size=None,
-                 relativeTransform=None,
-                 locked=False,
-                 fills=None,
-                 strokes=None,
-                 strokeWeight=None,
-                 strokeAlign=None,
-                 cornerRadius=None,
-                 rectangleCornerRadii=None,
-                 preserveRatio=False,
-                 layoutAlign=None,
-                 transitionNodeID=None,
-                 transitionDuration=None,
-                 transitionEasing=None,
-                 opacity=1,
-                 exportSettings=None,
-                 primaryAxisSizingMode=None,
-                 counterAxisSizingMode=None,
-                 primaryAxisAlignItems=None,
-                 counterAxisAlignItems=None,
-                 paddingLeft=None,
-                 paddingRight=None,
-                 paddingTop=None,
-                 paddingBottom=None,
-                 horizontalPadding=None,
-                 verticalPadding=None,
-                 itemSpacing=None,
-                 layoutGrids=None,
-                 overflowDirection=None,
-                 effects=None,
-                 isMask=None,
-                 layoutMode=None,
-                 layoutGrow=None,
-                 styles=None,
-                 absoluteRenderBounds=None,
-                 isFixed=None,  # think default is True, no docs yet
-                 *args, **kwargs):
+    def __init__(
+        self,
+        children,
+        background,
+        backgroundColor,
+        blendMode,
+        constraints,
+        absoluteBoundingBox,
+        clipsContent,
+        size=None,
+        relativeTransform=None,
+        locked=False,
+        fills=None,
+        strokes=None,
+        strokeWeight=None,
+        strokeAlign=None,
+        cornerRadius=None,
+        rectangleCornerRadii=None,
+        preserveRatio=False,
+        layoutAlign=None,
+        transitionNodeID=None,
+        transitionDuration=None,
+        transitionEasing=None,
+        opacity=1,
+        exportSettings=None,
+        primaryAxisSizingMode=None,
+        counterAxisSizingMode=None,
+        primaryAxisAlignItems=None,
+        counterAxisAlignItems=None,
+        paddingLeft=None,
+        paddingRight=None,
+        paddingTop=None,
+        paddingBottom=None,
+        horizontalPadding=None,
+        verticalPadding=None,
+        itemSpacing=None,
+        layoutGrids=None,
+        overflowDirection=None,
+        effects=None,
+        isMask=None,
+        layoutMode=None,
+        layoutGrow=None,
+        styles=None,
+        absoluteRenderBounds=None,
+        isFixed=None,  # think default is True, no docs yet
+        *args,
+        **kwargs
+    ):
         self.children = children  # An array of nodes that are direct children of this node
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.background = background  # [DEPRECATED] Background of the node. This is deprecated, as backgrounds for frames are now in the fills field.
@@ -201,8 +209,8 @@ class Frame(Node):
         self.overflowDirection = overflowDirection
         self.effects = effects  # An array of effects attached to this node
         self.isMask = isMask  # Does this node mask sibling nodes in front of it?
-        self.layoutGrow = layoutGrow,
-        self.styles = styles,
+        self.layoutGrow = layoutGrow
+        self.styles = styles
         self.isFixed = isFixed
         super().__init__(*args, **kwargs)
 
@@ -215,23 +223,42 @@ class Group(Frame):
 
 class Vector(Node):
     # A vector network, consisting of vertices and edges
-    def __init__(self, blendMode, constraints, absoluteBoundingBox, size=None, relativeTransform=None,
-                 fillGeometry=None,
-                 strokeWeight=None, strokeGeometry=None, strokeAlign=None, exportSettings=None, preserveRatio=False,
-                 transitionNodeID=None, opacity=1, transitionNodeDuration=None,
-                 transitionEasing=None, layoutGrow=0, locked=False, layoutAlign=None, effects=None,
-                 isMask=False, fills=None,
-                 strokeJoin=None,
-                 strokes=None,
-                 strokeDashes=None,
-                 strokeMiterAngle=None,
-                 strokeCap=None,
-                 styles=None,
-                 cornerRadius=None,
-                 rectangleCornerRadii=None,
-                 isFixed=None,
-                 absoluteRenderBounds=None,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        blendMode,
+        constraints,
+        absoluteBoundingBox,
+        size=None,
+        relativeTransform=None,
+        fillGeometry=None,
+        strokeWeight=None,
+        strokeGeometry=None,
+        strokeAlign=None,
+        exportSettings=None,
+        preserveRatio=False,
+        transitionNodeID=None,
+        opacity=1,
+        transitionNodeDuration=None,
+        transitionEasing=None,
+        layoutGrow=0,
+        locked=False,
+        layoutAlign=None,
+        effects=None,
+        isMask=False,
+        fills=None,
+        strokeJoin=None,
+        strokes=None,
+        strokeDashes=None,
+        strokeMiterAngle=None,
+        strokeCap=None,
+        styles=None,
+        cornerRadius=None,
+        rectangleCornerRadii=None,
+        isFixed=None,
+        absoluteRenderBounds=None,
+        *args,
+        **kwargs
+    ):
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.exportSettings = exportSettings  # An array of export settings representing images to export from node
         self.blendMode = blendMode  # How this node blends with nodes behind it in the scene
@@ -310,9 +337,18 @@ class Rectangle(Vector):
 class Text(Vector):
     # A regular n-sided polygon [Shares properties of Vector]
     # plus characters, style, characterStyleOverrides, and styleOverrideTable
-    def __init__(self, characters, style, characterStyleOverrides, styleOverrideTable, lineTypes, lineIndentations,
-                 layoutVersion=None,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        characters,
+        style,
+        characterStyleOverrides,
+        styleOverrideTable,
+        lineTypes,
+        lineIndentations,
+        layoutVersion=None,
+        *args,
+        **kwargs
+    ):
         self.characters = characters  # Text contained within text box
         self.style = style  # Style of text including font family and weight
         self.characterStyleOverrides = characterStyleOverrides  # Array with same number of elements as characters
@@ -325,8 +361,9 @@ class Text(Vector):
 
 class Slice(Node):
     # A rectangular region of the canvas that can be exported
-    def __init__(self, exportSettings, absoluteBoundingBox, absoluteRenderBounds,
-                 size, relativeTransform, *args, **kwargs):
+    def __init__(
+        self, exportSettings, absoluteBoundingBox, absoluteRenderBounds, size, relativeTransform, *args, **kwargs
+    ):
         self.exportSettings = exportSettings  # An array of export settings of images to export from this node
         self.absoluteBoundingBox = absoluteBoundingBox  # Bounding box of the node in absolute space coordinates
         self.absoluteRenderBounds = absoluteRenderBounds
@@ -348,12 +385,12 @@ class Component(Frame):
     # see https://www.figma.com/developers/api#files-types
     # A description of a main component. Helps you identify which component instances are attached to
     # this is what file get returns
-        # from look ing at the attributes it looks liek a meta file
-        # keyString
-        # nameString
-        # descriptionString
-        # componentSetId?String
-        # documentationLinks
+    # from look ing at the attributes it looks liek a meta file
+    # keyString
+    # nameString
+    # descriptionString
+    # componentSetId?String
+    # documentationLinks
 
     # A node that can have instances created of it that share the same properties
     def __init__(self, *args, **kwargs):
@@ -376,10 +413,25 @@ class Instance(Frame):
 
 
 class Sticky(Node):
-    def __init__(self, absoluteBoundingBox=None, absoluteRenderBounds=None,
-                 authorVisible=None, backgroundColor=None, blendMode=None,
-                 characters=None, effects=None, exportSettings=None, fills=None, isMask=None,
-                 locked=None, opacity=None, relativeTransform=None, *args, **kwargs):
+    def __init__(
+        self,
+        absoluteBoundingBox=None,
+        absoluteRenderBounds=None,
+        authorVisible=None,
+        backgroundColor=None,
+        blendMode=None,
+        characters=None,
+        effects=None,
+        exportSettings=None,
+        fills=None,
+        isMask=None,
+        locked=None,
+        opacity=None,
+        relativeTransform=None,
+        *args,
+        **kwargs
+    ):
+        # fmt: off
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
         self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
         self.authorVisible = authorVisible  # Boolean: If true, author name is visible.
@@ -394,17 +446,37 @@ class Sticky(Node):
         self.opacity = opacity  # Number: Overall opacity of paint (colors within the paint can also have opacity values which would blend with this)
         self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
         super().__init__(*args, **kwargs)
+        # fmt: on
 
 
 class ShapeWithText(Node):
-    def __init__(self,
-                 absoluteBoundingBox=None,
-                 absoluteRenderBounds=None,
-                 backgroundColor=None, blendMode=None, characters=None, cornerRadius=None, rectangleCornerRadii=None,
-                 effects=None, exportSettings=None, fills=None, isMask=None,
-                 locked=None, opacity=None, shapeType=None, strokes=None, strokeWeight=None, strokeCap=None,
-                 strokeJoin=None, strokeDashes=None, strokeAlign=None, relativeTransform=None,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        absoluteBoundingBox=None,
+        absoluteRenderBounds=None,
+        backgroundColor=None,
+        blendMode=None,
+        characters=None,
+        cornerRadius=None,
+        rectangleCornerRadii=None,
+        effects=None,
+        exportSettings=None,
+        fills=None,
+        isMask=None,
+        locked=None,
+        opacity=None,
+        shapeType=None,
+        strokes=None,
+        strokeWeight=None,
+        strokeCap=None,
+        strokeJoin=None,
+        strokeDashes=None,
+        strokeAlign=None,
+        relativeTransform=None,
+        *args,
+        **kwargs
+    ):
+        # fmt: off
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
         self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
@@ -427,17 +499,40 @@ class ShapeWithText(Node):
         self.strokeAlign = strokeAlign  # String: Position of stroke relative to vector outline, as a string enum.
         self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
         super().__init__(*args, **kwargs)
+        # fmt: on
 
 
 class Connector(Node):
-    def __init__(self,
-                 absoluteBoundingBox=None,
-                 absoluteRenderBounds=None,
-                 backgroundColor=None, blendMode=None, characters=None, connectorStart=None, connectorEnd=None,
-                 connectorLineType=None, cornerRadius=None, rectangleCornerRadii=None, effects=None,
-                 exportSettings=None, fills=None, isMask=None,
-                 locked=None, opacity=None, strokes=None, strokeWeight=None, strokeCap=None, strokeJoin=None,
-                 strokeDashes=None, strokeAlign=None, relativeTransform=None, textBackground=None, *args, **kwargs):
+    def __init__(
+        self,
+        absoluteBoundingBox=None,
+        absoluteRenderBounds=None,
+        backgroundColor=None,
+        blendMode=None,
+        characters=None,
+        connectorStart=None,
+        connectorEnd=None,
+        connectorLineType=None,
+        cornerRadius=None,
+        rectangleCornerRadii=None,
+        effects=None,
+        exportSettings=None,
+        fills=None,
+        isMask=None,
+        locked=None,
+        opacity=None,
+        strokes=None,
+        strokeWeight=None,
+        strokeCap=None,
+        strokeJoin=None,
+        strokeDashes=None,
+        strokeAlign=None,
+        relativeTransform=None,
+        textBackground=None,
+        *args,
+        **kwargs
+    ):
+        # fmt: off
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
         self.absoluteRenderBounds = absoluteRenderBounds  # The bounds of the rendered node in absolute space coordinates
         self.backgroundColor = backgroundColor  # Color: Background color of the canvas.
@@ -463,6 +558,7 @@ class Connector(Node):
         self.textBackground = textBackground  # ConnectorTextBackground: Connector text background.
         self.relativeTransform = relativeTransform  # Transform: The top two rows of a matrix that represents the 2D transform of this node relative to its parent. The bottom row of the matrix is implicitly always (0, 0, 1). Use to transform coordinates in geometry. Only present if geometry=paths is passed
         super().__init__(*args, **kwargs)
+        # fmt: on
 
 
 class NodeTypes(Enum):
