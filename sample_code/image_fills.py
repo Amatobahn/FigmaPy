@@ -28,5 +28,5 @@ for id, img_url in data['meta']['images'].items():
     # download image
     image_rq = requests.get(img_url)
     file_name = str(id).replace(':', '_') + '.' + 'svg'
-    with open(str(file_location/file_name), 'wb') as handler:
+    with open(str(file_location / file_name), 'wb') as handler:
         handler.write(image_rq.content)

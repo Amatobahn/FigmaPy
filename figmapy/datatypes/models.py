@@ -23,12 +23,14 @@ class Project:
     def deserialize_files(files, _parent=None):
         deserialized_files: List[FileMeta] = []
         for data in files:
-            fileMeta = FileMeta(key=data['key'],
-                                last_modified=data['last_modified'],
-                                name=data['name'],
-                                thumbnail_url=data['thumbnail_url'],
-                                branches=data.get('branches', None),
-                                _parent=_parent)
+            fileMeta = FileMeta(
+                key=data['key'],
+                last_modified=data['last_modified'],
+                name=data['name'],
+                thumbnail_url=data['thumbnail_url'],
+                branches=data.get('branches', None),
+                _parent=_parent,
+            )
             deserialized_files.append(fileMeta)
         return deserialized_files
 
@@ -37,6 +39,7 @@ class FileMeta:
     """
     this lives inside a project. used to get file content => class File
     """
+
     def __init__(self, key, last_modified, name, thumbnail_url, branches=None, _parent=None):
         self.key: str = key
         self.last_modified: str = last_modified
@@ -59,9 +62,25 @@ class File:
     """
     # JSON file contents from a file
     """
-    def __init__(self, name, document, components, componentSets, lastModified, thumbnailUrl, styles, schemaVersion=0,
-                version=None, role=None, editorType=None, linkAccess=None, mainFileKey=None, branches=None,
-                 _parent=None):
+
+    def __init__(
+        self,
+        name,
+        document,
+        components,
+        componentSets,
+        lastModified,
+        thumbnailUrl,
+        styles,
+        schemaVersion=0,
+        version=None,
+        role=None,
+        editorType=None,
+        linkAccess=None,
+        mainFileKey=None,
+        branches=None,
+        _parent=None,
+    ):
         self.name = name  # File name
         self.role = role
         self.lastModified = lastModified  # Date file was last modified
@@ -83,15 +102,18 @@ class File:
 
     def get_file_images(self, ids, scale=None, format=None, version=None):
         """syncronously get all images from the file"""
-        return current.figma_session.get_file_images_sync(file_key=self.mainFileKey,
-                                                          ids=ids,
-                                                          scale=scale,
-                                                          format=format,
-                                                          version=version)
+        return current.figma_session.get_file_images_sync(
+            file_key=self.mainFileKey,
+            ids=ids,
+            scale=scale,
+            format=format,
+            version=version,
+        )
 
 
 class Comment:
-    """ A comment or reply left by a user """
+    """A comment or reply left by a user"""
+
     def __init__(self, id, file_key, parent_id, user, created_at, resolved_at, message, client_meta, order_id):
         self.id = id  # Unique identifier for comment
         self.file_key = file_key  # The file in which the comment lives
@@ -105,14 +127,16 @@ class Comment:
 
 
 class User:  # todo not yet used, hookup
-    """ A description of a user """
+    """A description of a user"""
+
     def __init__(self, handle, img_url):
         self.handle = handle  # Name of the user
         self.img_url = img_url  # URL link to the user's profile image
 
 
 class Version:  # todo not yet used, hookup
-    """ A version of a file """
+    """A version of a file"""
+
     def __init__(self, id, created_at, label, description, user):
         self.id = id  # Unique identifier for version
         self.created_at = created_at  # the UTC ISO 8601 time at which the version was created

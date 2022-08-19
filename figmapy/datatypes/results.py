@@ -3,6 +3,7 @@ from figmapy.datatypes.models import Comment
 
 # result wrappers for GET commands
 
+
 class FileImages:
     # URLs for server-side rendered images from a file
     # https://www.figma.com/developers/api#get-images-endpoint
@@ -27,9 +28,19 @@ class Comments:
         if len(comments) > 0 or comments is not None:
             self.comments = []
             for comment in comments:
-                self.comments.append(Comment(comment['id'], comment['file_key'], comment['parent_id'], comment['user'],
-                                             comment['created_at'], comment['resolved_at'], comment['message'],
-                                             comment['client_meta'], comment['order_id']))
+                self.comments.append(
+                    Comment(
+                        comment['id'],
+                        comment['file_key'],
+                        comment['parent_id'],
+                        comment['user'],
+                        comment['created_at'],
+                        comment['resolved_at'],
+                        comment['message'],
+                        comment['client_meta'],
+                        comment['order_id'],
+                    )
+                )
 
 
 class TeamProjects:

@@ -40,7 +40,7 @@ for id, img_url in file_images.images.items():
             export_type = settings.format.lower()
 
     file_name = node.name + '.' + export_type
-    with open(str(file_location/file_name), 'wb') as handler:
+    with open(str(file_location / file_name), 'wb') as handler:
         handler.write(image_rq.content)
 
     # break  # only get the first image to speed up testing

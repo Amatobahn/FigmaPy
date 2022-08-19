@@ -1,5 +1,3 @@
-
-
 def get_file(file_key, geometry=None, version=None, plugin_data=None):
     # https://www.figma.com/developers/api#get-files-endpoint
     """

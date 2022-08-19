@@ -20,6 +20,7 @@ class AioHttpFigmaPy(FigmaPyBase):
     """
     Async version of the FigmaPy backend
     """
+
     def __init__(self, client=None, *args, **kwargs):
         """
         client (optional): An asynchronous web session/client. Defaults to aiohttp.ClientSession().
@@ -58,6 +59,7 @@ class AioHttpFigmaPy(FigmaPyBase):
 
         except Exception as e:
             import traceback
+
             print(traceback.format_exc())
             print('Error occurred attempting to make an API request. {0}'.format(e))
             return None

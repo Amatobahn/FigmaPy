@@ -94,7 +94,9 @@ class LayoutGrid:
 
 class Effect:
     # A visual effect such as a shadow or blur
-    def __init__(self, type, visible, radius, color=None, blendMode=None, offset=None, showShadowBehindNode=None, spread=0):
+    def __init__(
+        self, type, visible, radius, color=None, blendMode=None, offset=None, showShadowBehindNode=None, spread=0
+    ):
         self.type = type  # Type of effect as a string enum
         self.visible = visible  # is the effect active?
         self.radius = radius  # Radius of the blur effect (applies to shadows as well)
@@ -109,21 +111,24 @@ class Effect:
 
 class Paint:
     # A solid color, gradient, or image texture that can be applied as fills or strokes
-    def __init__(self, type,
-                 color=None,
-                 gradientHandlePositions=None,
-                 gradientStops=None,
-                 scaleMode=None,
-                 blendMode=None,
-                 imageTransform=None,
-                 scalingFactor=None,
-                 rotation=None,
-                 imageRef=None,
-                 filters=None,
-                 gifRef=None,
-                 visible=True,
-                 opacity=1,
-                 _parent=None):
+    def __init__(
+        self,
+        type,
+        color=None,
+        gradientHandlePositions=None,
+        gradientStops=None,
+        scaleMode=None,
+        blendMode=None,
+        imageTransform=None,
+        scalingFactor=None,
+        rotation=None,
+        imageRef=None,
+        filters=None,
+        gifRef=None,
+        visible=True,
+        opacity=1,
+        _parent=None,
+    ):
         self.type = type  # Type of paint as a string enum
         self.visible = visible  # Is the paint enabled?
         self.opacity = opacity  # Overall opacity of paint (colors within the paint can also have opacity values)
@@ -153,9 +158,9 @@ class Paint:
         if self.imageRef is None:
             return
 
-        file_images = self.root_parent.get_file_images(file_key=self.get_file_key(),
-                                                       ids=[self._parent.id],
-                                                       format='svg')
+        file_images = self.root_parent.get_file_images(
+            file_key=self.get_file_key(), ids=[self._parent.id], format='svg'
+        )
         # get file images is a figmapy session method. the root parent is the figmapy session
         # seems there might be a better way for this, instead of relying on root parent
 
@@ -211,8 +216,20 @@ class ColorStop:
 
 class TypeStyle:
     # Metadata for character formatting
-    def __init__(self, font_family, font_post_script_name, italic, font_weight, font_size, text_align_horizontal,
-                 text_align_vertical, letter_spacing, fills, line_height_px, line_height_percent):
+    def __init__(
+        self,
+        font_family,
+        font_post_script_name,
+        italic,
+        font_weight,
+        font_size,
+        text_align_horizontal,
+        text_align_vertical,
+        letter_spacing,
+        fills,
+        line_height_px,
+        line_height_percent,
+    ):
         self.font_family = font_family  # Font family of text (standard name)
         self.font_post_script_name = font_post_script_name  # PostScript font name
         self.italic = italic  # Is text italicized?
@@ -243,8 +260,11 @@ def deserialize_properties(self):
         self.color = Color(**self.color)
     if hasattr(self, 'constraint') and isinstance(self.constraint, dict) and self.constraint is not None:
         self.constraint = Constraint(**self.constraint)
-    if hasattr(self, 'absoluteBoundingBox') and isinstance(self.absoluteBoundingBox,
-                                                           dict) and self.absoluteBoundingBox is not None:
+    if (
+        hasattr(self, 'absoluteBoundingBox')
+        and isinstance(self.absoluteBoundingBox, dict)
+        and self.absoluteBoundingBox is not None
+    ):
         self.absoluteBoundingBox = Rect(**self.absoluteBoundingBox)
     if hasattr(self, 'blendMode') and isinstance(self.blendMode, str) and self.blendMode is not None:
         self.blendMode = BlendMode[self.blendMode]
