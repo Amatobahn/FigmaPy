@@ -1,5 +1,6 @@
 try:
     import aiohttp
+    import asyncio
 except ImportError:
     print("Async dependencies have not been installed: [httpx]")
 
@@ -86,3 +87,7 @@ class AioHttpFigmaPy(FigmaPyBase):
         data = await self.async_api_request(api_url, method='get')
         if data is not None:
             return FileImages(data['images'], data['err'])
+
+    # helper functions shared with sync version
+    def get_file_images_sync(self, *args, **kwargs):
+        asyncio.run(self.get_file_images(*args, **kwargs))
