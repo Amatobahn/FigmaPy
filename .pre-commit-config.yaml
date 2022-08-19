@@ -24,13 +24,13 @@ repos:
   #   rev: 5.0.4
   #   hooks:
   #     - id: flake8
-  #       args: ["--ignore=D100,D400,E501", "--exclude=*test*"]
+  #       args: ["--ignore=D400,E501", "--exclude=*test*"]
   #       additional_dependencies:
   #         - flake8-docstrings~=1.6.0
 
-  # # Security and Vulnerability checks
-  # - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
-  #   rev: v1.0.6
-  #   hooks:
-  #   -   id: python-bandit-vulnerability-check
-  #       args: [--skip, "B101", --recursive, clumper]
+  # Security and Vulnerability checks
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
+    rev: v1.0.6
+    hooks:
+    -   id: python-bandit-vulnerability-check
+        args: [--skip, "B101", --recursive, clumper]
