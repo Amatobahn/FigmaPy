@@ -23,7 +23,7 @@ def test_get_file():
     session = figmapy.FigmaPy(token='api_key')
 
     def api_request(*args, **kwargs):
-        """this is the result of running get_file on an empty figme file on 8 aug 2022
+        """this is the result of running get_file on an empty figma file on 8 aug 2022
         thumb url was shortened"""
         return {
             'document': {
@@ -63,3 +63,6 @@ def test_get_file():
 
     session.api_request = api_request
     file = session.get_file(key='file_key', geometry='geometry', version='version')
+
+    # check document and pages
+    assert file.document.pages[0]
