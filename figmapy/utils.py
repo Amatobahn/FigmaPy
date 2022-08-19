@@ -10,4 +10,4 @@ def get_file_key(node):
     if hasattr(node, 'mainFileKey'):
         return node.mainFileKey
     # return _parent.file_key  # todo property get setter
-    return node._parent.get_file_key()
+    return get_file_key(node._parent)
