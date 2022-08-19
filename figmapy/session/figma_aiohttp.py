@@ -11,7 +11,7 @@ from figmapy.datatypes.results import (
     FileVersions,
     Comments,
     TeamProjects,
-) 
+)
 from . import url_builder
 from .base import FigmaPyBase
 
@@ -27,9 +27,9 @@ class AioHttpFigmaPy(FigmaPyBase):
         """
         if client is None:
             client = aiohttp.ClientSession()
-        self.client = client 
+        self.client = client
         super().__init__(*args, **kwargs)
-    
+
     async def async_api_request(self, endpoint, method='get', payload=''):
         # Make async web requests
 
@@ -46,13 +46,13 @@ class AioHttpFigmaPy(FigmaPyBase):
             request_func = getattr(self.client, method)
         except AttributeError as e:
             print('Unsupported HTTP request, could be as a result of an invalid method {0}'.format(e))
-        
-        try:        
+
+        try:
             # Check if we need to pass data as a param
             if method in DATA_METHODS:
                 response = await request_func(url, headers=header, data=payload)
             else:
-                response = await request_func(url, headers=header)    
+                response = await request_func(url, headers=header)
             # Return data
             return await response.json()
 
@@ -60,11 +60,11 @@ class AioHttpFigmaPy(FigmaPyBase):
             import traceback
             print(traceback.format_exc())
             print('Error occurred attempting to make an API request. {0}'.format(e))
-            return None 
-            
+            return None
+
     async def get_file(self, key, geometry=None, version=None, parent=None):
         # https://www.figma.com/developers/api#get-files-endpoint
-        
+
         api_url = url_builder.get_file(key, geometry, version, parent)
         data = await self.async_api_request(api_url, method='get')
         if data is not None:
@@ -75,14 +75,14 @@ class AioHttpFigmaPy(FigmaPyBase):
 
     async def get_file_nodes(self, file_key, ids, version=None, depth=None, geometry=None, plugin_data=None):
         # https://www.figma.com/developers/api#get-file-nodes-endpoint
-    
+
         api_url = url_builder.get_file_nodes(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
         data = await self.async_api_request(api_url, method='get')
         return data
-    
+
     async def get_file_images(self, file_key, ids, scale=None, format=None, version=None):
         # https://www.figma.com/developers/api#get-images-endpoint
-    
+
         api_url = url_builder.get_file_images(file_key, ids, scale=None, format=None, version=None)
         data = await self.async_api_request(api_url, method='get')
         if data is not None:

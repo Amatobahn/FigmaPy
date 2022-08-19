@@ -12,4 +12,3 @@ class FigmaPyBase:
     # shared functions between sync and async, used by figma datatypes
     def get_file_images_sync(self, *args, **kwargs):
         raise NotImplementedError
-
