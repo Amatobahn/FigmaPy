@@ -12,3 +12,10 @@ class FigmaPyBase:
     # shared functions between sync and async, used by figma datatypes
     def get_file_images_sync(self, *args, **kwargs):
         raise NotImplementedError
+
+    def get_file_images_from_nodes_sync(self, nodes, *args, **kwargs):
+        if not nodes:
+            return []
+        file_key = nodes[0].get_file_key()
+        node_ids = [node.id for node in nodes]
+        return self.get_file_images_sync(file_key=file_key, ids=node_ids, *args, **kwargs)
