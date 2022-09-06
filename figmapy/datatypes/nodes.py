@@ -66,7 +66,7 @@ class Node:
         for node in self.children:
             nodes_found.append(node)
             if hasattr(node, 'children'):
-                node.get_children_recursively()
+                nodes_found.extend(node.get_children_recursively())
         return nodes_found
 
     def get_file_image_url(self):
