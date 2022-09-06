@@ -124,12 +124,12 @@ class Frame(Node):
     def __init__(
         self,
         children,
-        background,
-        backgroundColor,
-        blendMode,
-        constraints,
-        absoluteBoundingBox,
-        clipsContent,
+        background=None,
+        backgroundColor=None,
+        blendMode=None,
+        constraints=None,
+        absoluteBoundingBox=None,
+        clipsContent=None,
         size=None,
         relativeTransform=None,
         locked=False,
@@ -213,6 +213,10 @@ class Frame(Node):
         self.styles = styles
         self.isFixed = isFixed
         super().__init__(*args, **kwargs)
+
+
+class Widget(Frame):
+    pass
 
 
 class Group(Frame):
@@ -583,3 +587,4 @@ class NodeTypes(Enum):
     STICKY = Sticky
     SHAPE_WITH_TEXT = ShapeWithText
     CONNECTOR = Connector
+    WIDGET = Widget  # TODO
