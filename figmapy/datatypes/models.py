@@ -2,7 +2,6 @@
 
 # todo make class subscribe-able. so we can do both node.items or node['items']
 # todo add property get set to attributes. so we can auto cast to correct type. accept both dict or type
-from typing import List
 
 from . import nodes
 from figmapy.session import current
@@ -37,7 +36,8 @@ class Project:
 
 class FileMeta:
     """
-    this lives inside a project. used to get file content => class File
+    Info about a file, stored inside a project.
+    Access the file content with get_file_content
     """
 
     def __init__(self, key, last_modified, name, thumbnail_url, branches=None, _parent=None):

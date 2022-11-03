@@ -60,9 +60,6 @@ class FigmaPy(FigmaPyBase):
     # -------------------------------------------------------------------------
     # OAUTH2
     # -------------------------------------------------------------------------
-    """
-    Create token from client_id, client_secret, code
-    """
 
     def create_token(self, client_id, client_secret, redirect_uri, code):
         """

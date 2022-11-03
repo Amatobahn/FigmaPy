@@ -13,8 +13,17 @@ import warnings
 
 class Node:
     def __init__(
-        self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, scrollBehavior=None,
-            _parent=None, *args, **kwargs
+        self,
+        id,
+        name,
+        type,
+        visible=True,
+        pluginData=None,
+        sharedPluginData=None,
+        scrollBehavior=None,
+        _parent=None,
+        *args,
+        **kwargs,
     ):
         # figma data
         self.id = id  # A string uniquely identifying this node within the document.
@@ -110,7 +119,7 @@ class Canvas(Node):
         flowStartingPoints=None,
         exportSettings=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.children = children  # An array of top level layers on the canvas
         self.backgroundColor = backgroundColor  # Background color of the canvas
@@ -169,7 +178,7 @@ class Frame(Node):
         absoluteRenderBounds=None,
         isFixed=None,  # think default is True, no docs yet
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.children = children  # An array of nodes that are direct children of this node
         self.locked = locked  # If true, layer is locked and cannot be edited
@@ -263,7 +272,7 @@ class Vector(Node):
         isFixed=None,
         absoluteRenderBounds=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.locked = locked  # If true, layer is locked and cannot be edited
         self.exportSettings = exportSettings  # An array of export settings representing images to export from node
@@ -353,7 +362,7 @@ class Text(Vector):
         lineIndentations,
         layoutVersion=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.characters = characters  # Text contained within text box
         self.style = style  # Style of text including font family and weight
@@ -435,7 +444,7 @@ class Sticky(Node):
         opacity=None,
         relativeTransform=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         # fmt: off
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
@@ -480,7 +489,7 @@ class ShapeWithText(Node):
         strokeAlign=None,
         relativeTransform=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         # fmt: off
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
@@ -536,7 +545,7 @@ class Connector(Node):
         relativeTransform=None,
         textBackground=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         # fmt: off
         self.absoluteBoundingBox = absoluteBoundingBox  # Rectangle: Bounding box of the node in absolute space coordinates
