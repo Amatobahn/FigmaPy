@@ -65,12 +65,17 @@ class FigmaPy(FigmaPyBase):
     """
 
     def create_token(self, client_id, client_secret, redirect_uri, code):
+        """
+        receive the user access token and token expiration (in seconds) in a JSON response.
+        return: access_token, expires_in
+        """
+
         payload = {
-            'client_id': '{0}'.format(client_id),
-            'client_secret': '{0}'.format(client_secret),
+            'client_id': f'{client_id}',
+            'client_secret': f'{client_secret}',
+            'redirect_uri': f'{redirect_uri}',
+            'code': f'{code}',
             'grant_type': 'authorization_code',
-            'redirect_uri': '{0}'.format(redirect_uri),
-            'code': '{0}'.format(code),
         }
         try:
             response = requests.post(self.token_uri, data=payload)
