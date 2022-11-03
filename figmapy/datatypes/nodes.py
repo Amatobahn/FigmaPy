@@ -1,6 +1,7 @@
 from enum import Enum
 from figmapy.utils import get_file_key
 from .properties import deserialize_properties
+import warnings
 
 
 # -------------------------------------------------------------------------
@@ -27,12 +28,11 @@ class Node:
         self.deserialize_properties()
 
         if args or kwargs:
-            print(
+            warnings.warn(
                 "Node class has been instantiated with unsupported args and kwargs."
                 "this is likely due to a change in the Figma API, or an unsupported parameter in this wrapper"
+                f"args: {args}, kwargs: {kwargs}, node: {self.__class__}"
             )
-            print(args, kwargs)
-            print(self)
 
     def deserialize_properties(self):
         """
