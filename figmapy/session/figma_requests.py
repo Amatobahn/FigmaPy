@@ -223,13 +223,16 @@ class FigmaPy(FigmaPyBase):
     # -------------------------------------------------------------------------
     def get_project_files(self, project_id):
         """
-        List the files in a given project (but don't load their content)
+        List info about the files in a project, without loading the file content
         """
+        # TODO provide lazy load files
         # https://www.figma.com/developers/api#get-project-files-endpoint
         project_data = self.api_request('projects/{0}/files'.format(project_id))
         # return ProjectFiles(project_data['files'])
-        project = Project(name=project_data['name'], files=project_data['files'])
-        return project.files
+
+        # project = Project(name=project_data['name'], files=project_data['files'], project_id=project_id)
+        # return project.files
+        return project_data['files']
 
     # -------------------------------------------------------------------------
     # SCOPE: UTIL FUNCTIONS - NOT PART OF THE API
