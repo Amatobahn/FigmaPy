@@ -13,7 +13,8 @@ import warnings
 
 class Node:
     def __init__(
-        self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, _parent=None, *args, **kwargs
+        self, id, name, type, visible=True, pluginData=None, sharedPluginData=None, scrollBehavior=None,
+            _parent=None, *args, **kwargs
     ):
         # figma data
         self.id = id  # A string uniquely identifying this node within the document.
@@ -22,6 +23,7 @@ class Node:
         self.type = type  # The type of the node
         self.pluginData = pluginData  # Data written by plugins that is visible only to the plugin that wrote it. Requires the `pluginData` to include the ID of the plugin.
         self.sharedPluginData = sharedPluginData  # Data written by plugins that is visible to all plugins. Requires the `pluginData` parameter to include the string "shared
+        self.scrollBehavior = scrollBehavior
 
         # python helpers
         self._parent = _parent  # The python parent of this node. which holds this node.
