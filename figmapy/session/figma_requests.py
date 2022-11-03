@@ -209,14 +209,15 @@ class FigmaPy(FigmaPyBase):
     # -------------------------------------------------------------------------
     # SCOPE: TEAMS -> PROJECTS
     # -------------------------------------------------------------------------
-    def get_team_projects(self, team_id) -> TeamProjects:
+    def get_team_projects(self, team_id) -> "list[Project]":
         """
         Get all projects for a team
         """
         # https://www.figma.com/developers/api#get-team-projects-endpoint
-        data = self.api_request('teams/{0}/projects'.format(team_id), method='get')
-        if data is not None:
-            return TeamProjects(data['projects'])
+        data = self.api_request('teams/{0}/projects'.format(team_id), method='get') or []
+        return [Project(project_id=project['id'], name=project['name']) for project in data['projects']]
+        # if data is not None:
+        #     return TeamProjects(data['projects'])
 
     # -------------------------------------------------------------------------
     # SCOPE: PROJECTS -> FILES
