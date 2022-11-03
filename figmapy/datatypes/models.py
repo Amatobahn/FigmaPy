@@ -19,8 +19,11 @@ class Project:
         self._parent = _parent
 
     @staticmethod
-    def deserialize_files(files, _parent=None):
-        deserialized_files: List[FileMeta] = []
+    def deserialize_files(files, _parent=None) -> "list[FileMeta]":
+        """
+        Deserialize files from json to FileMeta objects
+        """
+        deserialized_files: list[FileMeta] = []
         for data in files:
             fileMeta = FileMeta(
                 key=data['key'],
