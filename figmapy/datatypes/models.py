@@ -51,11 +51,11 @@ class FileMeta:
         self._parent = _parent  # the project this file belongs to
         self._file_key: str = self.key
 
-    def get_file_content(self, figmaPy, geometry=None, version=None):
+    def get_file_content(self, geometry=None, version=None) -> "File":
         """
         load the file from the server
         """
-        return figmaPy.get_file(key=self.key, geometry=geometry, version=version, parent=self)
+        return current.figma_session.get_file(key=self.key, geometry=geometry, version=version, parent=self)
 
 
 class File:
