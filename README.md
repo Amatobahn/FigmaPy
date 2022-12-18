@@ -1,8 +1,9 @@
-<p align=center>
+<p align=left>
+  The PyPi package is currently behind on this repo! 
   <a href="https://badge.fury.io/py/FigmaPy">
     <img src="https://badge.fury.io/py/FigmaPy.svg" alt="PyPI version" height="18">
-  </a>
-</p> The PyPi package is quite behind on this repo currently!
+  </a> 
+</p> 
 
 An unofficial Python3+ wrapper for Figma API
 
