@@ -122,7 +122,7 @@ class FigmaPy(FigmaPyBase):
         return a partial JSON, only relevant data for the node. includes parent data.
         nodes data can be accessed with data['nodes']
         """
-        api_url = url_builder.get_file_nodes(file_key, ids, version=None, depth=None, geometry=None, plugin_data=None)
+        api_url = url_builder.get_file_nodes(file_key, ids, version=version, depth=depth, geometry=geometry, plugin_data=plugin_data)
         data = self.api_request(api_url, method='get')
         return data
 
@@ -132,7 +132,7 @@ class FigmaPy(FigmaPyBase):
         Get urls for server-side rendered images from a file.
         If the node is not an image, a rasterized version of the node will be returned.
         """
-        api_url = url_builder.get_file_images(file_key, ids, scale=None, format=None, version=None)
+        api_url = url_builder.get_file_images(file_key, ids, scale=scale, format=format, version=version)
         data = self.api_request(api_url, method='get')
         if data is not None:
             return FileImages(data['images'], data['err'])
