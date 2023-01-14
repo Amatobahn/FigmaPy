@@ -90,7 +90,7 @@ class Node:
 
 
 class Document(Node):
-    # The root node of a file, containing the pages.
+    """The root node of a file, containing the pages."""
     def __init__(self, children, *args, **kwargs):
         self.children = children  # An array of canvases attached to the document
         super().__init__(*args, **kwargs)
@@ -99,9 +99,21 @@ class Document(Node):
     def pages(self):
         return self.children
 
+    def get_page(self, name):
+        """
+        helper to get a page by name
+
+        >>> import figmapy
+        >>> figm = figmapy.FigmaPy(token="TOKEN")
+        >>> file = figm.get_file(key="FILE_KEY")
+        >>> page = file.document.get_page(name="Page 1")
+        """
+        for page in self.pages:
+            if page.name == name:
+                return page
 
 class Canvas(Node):
-    # Represents a single page
+    """Represents a single page"""
     def __init__(
         self,
         children,
