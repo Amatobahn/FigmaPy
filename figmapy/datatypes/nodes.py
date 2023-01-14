@@ -34,6 +34,9 @@ class Node:
             print(args, kwargs)
             print(self)
 
+    def __repr__(self):
+        return "figmapy.dt." + self.__class__.__name__ + "('" + self.name + "')"
+
     def deserialize_properties(self):
         """
         deserialize properties to their matching type

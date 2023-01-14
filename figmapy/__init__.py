@@ -20,3 +20,4 @@ __version__ = '2018.1.0'
 from .session.figma_aiohttp import AioHttpFigmaPy
 from .session.figma_requests import FigmaPy
 from . import datatypes
+dt = datatypes  # alias for convenience
