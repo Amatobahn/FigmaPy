@@ -102,3 +102,7 @@ ENV/
 # pycharm
 .idea/*
 test/test.py
+
+# pytest / ruff caches
+.pytest_cache/
+.ruff_cache/

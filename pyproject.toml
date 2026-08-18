@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "FigmaPy"
+# Same number as the Figma OpenAPI spec release this was generated from.
+# See docs/versioning.md.
+version = "0.42.0"
+description = "An unofficial Python wrapper for the Figma REST API, generated from Figma's official OpenAPI spec"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [
+    { name = "Greg Amato", email = "amatobahn@gmail.com" },
+    { name = "Hannes Delbeke" },
+]
+keywords = ["figma", "api", "wrapper", "openapi", "design"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "httpx>=0.24",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "datamodel-code-generator[http]>=0.25",
+    "pyyaml>=6",
+    "ruff>=0.6",
+]
+
+[project.urls]
+Homepage = "https://github.com/Amatobahn/FigmaPy"
+Issues = "https://github.com/Amatobahn/FigmaPy/issues"
+"Figma API docs" = "https://www.figma.com/developers/api"
+"Figma OpenAPI spec" = "https://github.com/figma/rest-api-spec"
+
+[tool.hatch.build.targets.wheel]
+packages = ["figmapy"]
+
+[tool.hatch.build.targets.sdist]
+include = ["figmapy", "spec", "tools", "tests", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: regenerates code from the spec, takes ~10s"]
+filterwarnings = ["error::figmapy.errors.FigmaSpecWarning"]
+
+[tool.ruff]
+line-length = 110
+extend-exclude = ["figmapy/models.py", "figmapy/_endpoints.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]
