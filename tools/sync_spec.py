@@ -186,7 +186,8 @@ def sync(version: str) -> bool:
 
     SPEC_FILE.write_bytes(new_bytes)
     VERSION_FILE.write_text(f"{version}\n", encoding="utf8")
-    set_project_version(version)
+    # Note: package version (pyproject.toml) is date-based and managed separately.
+    # Only FIGMA_SPEC_VERSION (baked into _endpoints.py) tracks the spec version.
     subprocess.run([sys.executable, str(ROOT / "tools" / "generate.py")], check=True)
 
     REPORT_FILE.parent.mkdir(exist_ok=True)

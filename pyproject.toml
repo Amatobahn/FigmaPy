@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "FigmaPy"
-# Same number as the Figma OpenAPI spec release this was generated from.
+# Date-based versioning: YEAR.RELEASE.PATCH (e.g. 2026.1.0).
 # See docs/versioning.md.
-version = "0.42.0"
+version = "2026.1.0"
 description = "An unofficial Python wrapper for the Figma REST API, generated from Figma's official OpenAPI spec"
 readme = "README.md"
 license = "Apache-2.0"

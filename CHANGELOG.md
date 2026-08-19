@@ -1,9 +1,10 @@
 # Changelog
 
-Versions track the Figma OpenAPI spec release they were generated from. See
-[docs/versioning.md](docs/versioning.md).
+Versions use date-based versioning (`YEAR.RELEASE.PATCH`). See
+[docs/versioning.md](docs/versioning.md) for the scheme; `figmapy.FIGMA_SPEC_VERSION`
+tells you which Figma OpenAPI spec each release was generated from.
 
-## 0.42.0
+## 2026.1.0
 
 Generated from [rest-api-spec
 v0.42.0](https://github.com/figma/rest-api-spec/releases/tag/v0.42.0).

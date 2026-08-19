@@ -8,6 +8,7 @@ one of these fails.
 from __future__ import annotations
 
 import inspect
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -59,7 +60,8 @@ def test_every_async_method_is_a_coroutine():
 def test_package_version_matches_the_pinned_spec():
     pinned = (ROOT / "spec" / "VERSION").read_text(encoding="utf8").strip()
     assert figmapy.FIGMA_SPEC_VERSION == pinned
-    assert figmapy.__version__.startswith(pinned)
+    # Package version is date-based (YEAR.RELEASE.PATCH), independent of spec version.
+    assert re.match(r"^\d{4}\.\d+\.\d+", figmapy.__version__), figmapy.__version__
 
 
 def test_models_accept_unknown_fields():

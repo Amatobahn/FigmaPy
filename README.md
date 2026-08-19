@@ -136,15 +136,14 @@ but only after you have unblocked yourself with the row above.
 
 ## Versioning
 
-The package version *is* the Figma spec version. `FigmaPy 0.42.0` is generated from
-[`rest-api-spec v0.42.0`](https://github.com/figma/rest-api-spec/releases/tag/v0.42.0).
+The package version follows date-based versioning (`YEAR.RELEASE.PATCH`), continuing the scheme from `FigmaPy 2018.1.0` on PyPI.
 
 ```python
-figmapy.FIGMA_SPEC_VERSION   # '0.42.0'
+figmapy.__version__          # '2026.1.0'
+figmapy.FIGMA_SPEC_VERSION   # '0.42.0' - the Figma OpenAPI spec this was generated from
 ```
 
-Fixes to the hand-written parts ship as `0.42.0.post1` and friends. See
-[docs/versioning.md](docs/versioning.md) for the full rules and what counts as breaking.
+See [docs/versioning.md](docs/versioning.md) for the full rules.
 
 ## Upgrading from 2018.1.0
 
