@@ -3,7 +3,7 @@
 The client surface and every response model are generated from Figma's official
 OpenAPI spec (https://github.com/figma/rest-api-spec), so this package tracks the API
 instead of chasing it. ``figmapy.FIGMA_SPEC_VERSION`` tells you which spec release you
-have; the package version is the same number.
+have; ``figmapy.__version__`` follows date-based versioning (YEAR.RELEASE.PATCH).
 
     import figmapy
 
@@ -38,7 +38,11 @@ from .helpers import (
     walk,
 )
 
-__version__ = FIGMA_SPEC_VERSION
+try:
+    from importlib.metadata import version as _pkg_version
+    __version__ = _pkg_version("FigmaPy")
+except Exception:
+    __version__ = "2026.1.0"  # fallback when not installed
 __license__ = "Apache-2.0"
 
 #: Pre-1.0 name for :class:`Figma`.

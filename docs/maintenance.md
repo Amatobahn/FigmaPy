@@ -67,7 +67,7 @@ one construct — not to move to a heavyweight generator. The places it makes as
 ## Releasing
 
 ```
-git tag v0.42.0 && git push --tags
+git tag v2026.1.0 && git push --tags
 ```
 
 `.github/workflows/release.yml` checks that the tag matches `figmapy.__version__`, runs
