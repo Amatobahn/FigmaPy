@@ -1,5 +1,7 @@
 # FigmaPy
 
+[![PyPI version](https://badge.fury.io/py/FigmaPy.svg)](https://badge.fury.io/py/FigmaPy)
+
 An unofficial Python wrapper for the [Figma REST API](https://www.figma.com/developers/api).
 
 Every endpoint and every response model is generated from [Figma's official OpenAPI
